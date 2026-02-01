@@ -1,0 +1,41 @@
+{
+  "sections": {
+    "main": {
+      "type": "main-collection",
+      "settings": {}
+    },
+    "shop_all": {
+      "type": "main-shop-all",
+      "settings": {}
+    },
+    "new": {
+      "type": "main-new",
+      "settings": {}
+    },
+    "voyage": {
+      "type": "main-scent-voyage",
+      "settings": {}
+    },
+    "perfumes": {
+      "type": "main-perfumes",
+      "settings": {}
+    },
+    "candles": {
+      "type": "main-candles",
+      "settings": {}
+    },
+    "sale": {
+      "type": "main-sale",
+      "settings": {}
+    },
+    "diffusers": {
+      "type": "main-diffusers",
+      "settings": {}
+    },
+    "fragrance_oils": {
+      "type": "main-fragrance-oils",
+      "settings": {}
+    }
+  },
+  "order": ["shop_all", "new", "sale", "diffusers", "fragrance_oils", "voyage", "perfumes", "candles", "main"]
+}

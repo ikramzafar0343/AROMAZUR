@@ -1,0 +1,28 @@
+<section class="main-list-collections">
+  <div class="page-width">
+    <h1>Collections</h1>
+
+    {% if collections.size == 0 %}
+      <p>No collections found.</p>
+    {% else %}
+      <ul role="list">
+        {% for collection in collections %}
+          {% if collection.handle != 'frontpage' %}
+            <li>
+              <a href="{{ collection.url }}">{{ collection.title }}</a>
+            </li>
+          {% endif %}
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "List collections",
+  "tag": "section",
+  "class": "section-main-list-collections",
+  "settings": []
+}
+{% endschema %}

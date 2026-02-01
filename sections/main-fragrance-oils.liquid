@@ -1,0 +1,266 @@
+{% liquid
+  assign oils_collection = collections['fragrance-oils']
+  if oils_collection == blank
+    assign oils_collection = collections['diffuser-oils']
+    if oils_collection == blank
+      assign oils_collection = collections['oils']
+      if oils_collection == blank
+        assign oils_collection = collections['all']
+      endif
+    endif
+  endif
+  
+  assign oils_products = oils_collection.products
+  
+  assign categories_list = ''
+  for product in oils_products limit: 100
+    assign product_type = product.type | downcase
+    if categories_list == blank
+      assign categories_list = product_type
+    else
+      unless categories_list contains product_type
+        assign categories_list = categories_list | append: '|' | append: product_type
+      endunless
+    endif
+  endfor
+  assign categories_array = categories_list | split: '|'
+  
+  assign min_price = 0
+  assign max_price = 1000
+  for product in oils_products limit: 50
+    assign product_price = product.price | divided_by: 100.0
+    if product_price < min_price or min_price == 0
+      assign min_price = product_price
+    endif
+    if product_price > max_price
+      assign max_price = product_price
+    endif
+  endfor
+%}
+
+{% if collection.handle == 'fragrance-oils' or collection.handle == 'diffuser-oils' or collection.handle == 'oils' or collection.handle contains 'oil' %}
+<section class="az-oils az-page-transition" data-oils-page>
+  <!-- Hero Header -->
+  <div class="az-oils__hero">
+    <div class="page-width az-oils__hero-inner">
+      <div class="az-oils__hero-content">
+        <div class="az-oils__eyebrow">DIFFUSER OILS</div>
+        <h1 class="az-oils__title">Premium Fragrance Oils</h1>
+        <p class="az-oils__desc">Discover our curated collection of luxury fragrance oils, crafted to transform any space with long-lasting, captivating scents.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width az-oils__container">
+    <div class="az-oils__layout">
+      <!-- Filter Sidebar -->
+      <aside class="az-oils__sidebar" data-oils-sidebar>
+        <div class="az-oils__sidebar-header">
+          <h2 class="az-oils__sidebar-title">Filters</h2>
+          <button class="az-oils__sidebar-close" type="button" data-oils-sidebar-close aria-label="Close filters">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="az-oils__filters">
+          <!-- Category Filter -->
+          <div class="az-oils__filter-group">
+            <h3 class="az-oils__filter-title">Category</h3>
+            <div class="az-oils__filter-options">
+              <label class="az-oils__filter-option">
+                <input type="radio" name="oils-category" value="all" data-oils-filter="category" checked>
+                <span>All Products</span>
+              </label>
+              {% for category in categories_array %}
+                {% if category != blank %}
+                  <label class="az-oils__filter-option">
+                    <input type="radio" name="oils-category" value="{{ category | handle }}" data-oils-filter="category">
+                    <span>{{ category }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="az-oils__filter-group">
+            <h3 class="az-oils__filter-title">Price Range</h3>
+            <div class="az-oils__price-range">
+              <div class="az-oils__price-inputs">
+                <input type="number" class="az-oils__price-input" data-oils-price-min placeholder="{{ min_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+                <span>to</span>
+                <input type="number" class="az-oils__price-input" data-oils-price-max placeholder="{{ max_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+              </div>
+              <div class="az-oils__price-slider">
+                <input type="range" class="az-oils__range" data-oils-range-min min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ min_price | times: 100 }}" step="1">
+                <input type="range" class="az-oils__range" data-oils-range-max min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ max_price | times: 100 }}" step="1">
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="az-oils__reset" data-oils-reset>Reset Filters</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="az-oils__main">
+        <!-- Toolbar -->
+        <div class="az-oils__toolbar">
+          <div class="az-oils__results">
+            <span class="az-oils__results-label">All Fragrance Oils</span>
+            <span class="az-oils__results-count">(<span data-oils-count>{{ oils_products.size }}</span> items)</span>
+          </div>
+          
+          <div class="az-oils__toolbar-actions">
+            <button class="az-oils__filter-toggle" type="button" data-oils-sidebar-toggle>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Filters
+            </button>
+            
+            <select class="az-oils__sort" data-oils-sort>
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="az-oils__grid" data-oils-grid>
+          {% for product in oils_products %}
+            {% liquid
+              assign category_token = ''
+              assign type_lc = product.type | downcase
+              case type_lc
+                when 'fragrance oils'
+                  assign category_token = 'fragrance-oils'
+                when 'diffuser oils'
+                  assign category_token = 'diffuser-oils'
+                when 'oils'
+                  assign category_token = 'oils'
+              endcase
+              
+              if category_token == blank
+                assign category_token = type_lc | handle
+              endif
+              
+              assign on_sale = false
+              if product.compare_at_price > product.price
+                assign on_sale = true
+              endif
+            %}
+            
+            <div class="az-oils__product-wrapper">
+              {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
+              <div class="az-oils__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
+                   data-oils-product 
+                   data-category="{{ category_token }}"
+                   data-price="{{ product.price }}"
+                   data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
+                <a class="az-prod__link" href="{{ product.url }}">
+                  <div class="az-prod__media">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
+                    {% else %}
+                      <div class="az-prod__placeholder"></div>
+                    {% endif %}
+                    {% if on_sale %}
+                      <span class="az-prod__badge">SALE</span>
+                    {% endif %}
+                  </div>
+                  <div class="az-prod__body">
+                    <h3 class="az-prod__title">{{ product.title }}</h3>
+                    <div class="az-prod__price">
+                      <span class="az-prod__price-current">{{ product.price | money }}</span>
+                      {% if on_sale %}
+                        <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+
+                <div class="az-prod__actions">
+                  {% form 'product', product, class: 'az-prod__form' %}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                      {% if product.selected_or_first_available_variant.available %}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                          <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+                          <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Add to cart
+                      {% else %}
+                        Sold out
+                      {% endif %}
+                    </button>
+                  {% endform %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        <div class="az-oils__empty" data-oils-empty hidden>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M9 2V6H15V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M9 6H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M7 6V22H17V6" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+            <path d="M7 10H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 14H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            <path d="M7 18H17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+          <p>No products found matching your filters.</p>
+          <button type="button" class="az-oils__reset-btn" data-oils-reset>Reset Filters</button>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Fragrance Oils",
+  "tag": "section",
+  "class": "section-main-fragrance-oils",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "DIFFUSER OILS"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Premium Fragrance Oils"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover our curated collection of luxury fragrance oils, crafted to transform any space with long-lasting, captivating scents."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Fragrance Oils"
+    }
+  ]
+}
+{% endschema %}

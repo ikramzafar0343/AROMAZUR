@@ -1,0 +1,45 @@
+{
+  "sections": {
+    "hero": {
+      "type": "home-hero",
+      "settings": {}
+    },
+    "collection_slider": {
+      "type": "home-collection-slider",
+      "settings": {}
+    },
+    "featured_products": {
+      "type": "home-featured-products",
+      "settings": {}
+    },
+    "heritage": {
+      "type": "home-heritage",
+      "settings": {}
+    },
+    "newsletter_marquee": {
+      "type": "home-newsletter-marquee",
+      "settings": {}
+    },
+    "reviews": {
+      "type": "home-reviews",
+      "settings": {}
+    },
+    "environments": {
+      "type": "home-environments",
+      "settings": {}
+    },
+    "newsletter_cta": {
+      "type": "home-newsletter-cta",
+      "settings": {}
+    },
+    "faq": {
+      "type": "home-faq",
+      "settings": {}
+    },
+    "main": {
+      "type": "main-index",
+      "settings": {}
+    }
+  },
+  "order": ["hero", "collection_slider", "featured_products", "heritage", "newsletter_marquee", "reviews", "environments", "newsletter_cta", "faq", "main"]
+}

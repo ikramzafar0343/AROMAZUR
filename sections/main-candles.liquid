@@ -1,0 +1,384 @@
+{% liquid
+  assign candles_collection = collections['candles']
+  if candles_collection == blank
+    assign candles_collection = collections['all']
+  endif
+  
+  assign candles_products = candles_collection.products
+  
+  assign categories_list = ''
+  for product in candles_products limit: 100
+    assign product_type = product.type | downcase
+    if categories_list == blank
+      assign categories_list = product_type
+    else
+      unless categories_list contains product_type
+        assign categories_list = categories_list | append: '|' | append: product_type
+      endunless
+    endif
+  endfor
+  assign categories_array = categories_list | split: '|'
+  
+  assign min_price = 0
+  assign max_price = 1000
+  for product in candles_products limit: 50
+    assign product_price = product.price | divided_by: 100.0
+    if product_price < min_price or min_price == 0
+      assign min_price = product_price
+    endif
+    if product_price > max_price
+      assign max_price = product_price
+    endif
+  endfor
+  
+  assign scent_families = 'Woody|Fresh|Fruity|Floral|Oriental'
+  assign scent_families_array = scent_families | split: '|'
+%}
+
+{% if collection.handle == 'candles' or collection.handle contains 'candle' %}
+<section class="az-candles az-page-transition" data-candles-page>
+  <!-- Hero Header -->
+  <div class="az-candles__hero">
+    <div class="page-width az-candles__hero-inner">
+      <div class="az-candles__hero-content">
+        <div class="az-candles__eyebrow">CANDLES</div>
+        <h1 class="az-candles__title">Premium Scented Candles</h1>
+        <p class="az-candles__desc">Transform your space with our handcrafted candles, each one carefully designed to create the perfect ambiance for any moment.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scent Family Filter -->
+  <div class="az-candles__families">
+    <div class="page-width">
+      <div class="az-candles__families-header">
+        <h2 class="az-candles__families-title">Find Your Scent</h2>
+        <p class="az-candles__families-desc">Filter by scent family</p>
+      </div>
+      <div class="az-candles__families-list" data-candles-families>
+        <button class="az-candles__family is-active" type="button" data-family="all">
+          <span>All Candles</span>
+        </button>
+        <button class="az-candles__family" type="button" data-family="woody">
+          <span class="az-candles__family-dot" style="background: #8B4513;"></span>
+          <span>Woody</span>
+        </button>
+        <button class="az-candles__family" type="button" data-family="fresh">
+          <span class="az-candles__family-dot" style="background: #4A90E2;"></span>
+          <span>Fresh</span>
+        </button>
+        <button class="az-candles__family" type="button" data-family="fruity">
+          <span class="az-candles__family-dot" style="background: #E91E63;"></span>
+          <span>Fruity</span>
+        </button>
+        <button class="az-candles__family" type="button" data-family="floral">
+          <span class="az-candles__family-dot" style="background: #FFB6C1;"></span>
+          <span>Floral</span>
+        </button>
+        <button class="az-candles__family" type="button" data-family="oriental">
+          <span class="az-candles__family-dot" style="background: #D4AF37;"></span>
+          <span>Oriental</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width az-candles__container">
+    <div class="az-candles__layout">
+      <!-- Filter Sidebar -->
+      <aside class="az-candles__sidebar" data-candles-sidebar>
+        <div class="az-candles__sidebar-header">
+          <h2 class="az-candles__sidebar-title">Filters</h2>
+          <button class="az-candles__sidebar-close" type="button" data-candles-sidebar-close aria-label="Close filters">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="az-candles__filters">
+          <!-- Category Filter -->
+          <div class="az-candles__filter-group">
+            <h3 class="az-candles__filter-title">Category</h3>
+            <div class="az-candles__filter-options">
+              <label class="az-candles__filter-option">
+                <input type="radio" name="candles-category" value="all" data-candles-filter="category" checked>
+                <span>All Products</span>
+              </label>
+              {% for category in categories_array %}
+                {% if category != blank %}
+                  <label class="az-candles__filter-option">
+                    <input type="radio" name="candles-category" value="{{ category | handle }}" data-candles-filter="category">
+                    <span>{{ category }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="az-candles__filter-group">
+            <h3 class="az-candles__filter-title">Price Range</h3>
+            <div class="az-candles__price-range">
+              <div class="az-candles__price-inputs">
+                <input type="number" class="az-candles__price-input" data-candles-price-min placeholder="{{ min_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+                <span>to</span>
+                <input type="number" class="az-candles__price-input" data-candles-price-max placeholder="{{ max_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+              </div>
+              <div class="az-candles__price-slider">
+                <input type="range" class="az-candles__range" data-candles-range-min min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ min_price | times: 100 }}" step="1">
+                <input type="range" class="az-candles__range" data-candles-range-max min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ max_price | times: 100 }}" step="1">
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="az-candles__reset" data-candles-reset>Reset Filters</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="az-candles__main">
+        <!-- Toolbar -->
+        <div class="az-candles__toolbar">
+          <div class="az-candles__results">
+            <span class="az-candles__results-label" data-candles-family-label>All Candles</span>
+            <span class="az-candles__results-count">(<span data-candles-count>{{ candles_products.size }}</span> items)</span>
+          </div>
+          
+          <div class="az-candles__toolbar-actions">
+            <button class="az-candles__filter-toggle" type="button" data-candles-sidebar-toggle>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Filters
+            </button>
+            
+            <select class="az-candles__sort" data-candles-sort>
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="newest">Newest</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="az-candles__grid" data-candles-grid>
+          {% for product in candles_products %}
+            {% liquid
+              assign category_token = ''
+              assign type_lc = product.type | downcase
+              case type_lc
+                when 'candles'
+                  assign category_token = 'candles'
+                when 'room sprays'
+                  assign category_token = 'room-sprays'
+              endcase
+              
+              if category_token == blank
+                assign category_token = type_lc | handle
+              endif
+              
+              assign on_sale = false
+              if product.compare_at_price > product.price
+                assign on_sale = true
+              endif
+              
+              assign scent_family = 'Floral'
+              assign burn_time = '50-60 Hours'
+              assign wax_type = 'Soy Blend'
+              
+              for tag in product.tags
+                assign tag_lc = tag | downcase
+                if tag_lc contains 'woody' or tag_lc contains 'santal' or tag_lc contains 'one'
+                  assign scent_family = 'Woody'
+                  break
+                elsif tag_lc contains 'fresh' or tag_lc contains 'ocean' or tag_lc contains 'breeze'
+                  assign scent_family = 'Fresh'
+                  break
+                elsif tag_lc contains 'fruity' or tag_lc contains 'cherry' or tag_lc contains 'love'
+                  assign scent_family = 'Fruity'
+                  break
+                elsif tag_lc contains 'floral' or tag_lc contains 'day' or tag_lc contains 'tea'
+                  assign scent_family = 'Floral'
+                  break
+                elsif tag_lc contains 'oriental'
+                  assign scent_family = 'Oriental'
+                  break
+                endif
+              endfor
+              
+              if product.description contains 'hours' or product.description contains 'Hours'
+                assign burn_time_start = product.description | split: 'hours' | first | split: 'Hours' | first
+                if burn_time_start != blank
+                  assign burn_time = burn_time_start | append: ' Hours' | strip
+                endif
+              endif
+            %}
+            
+            <div class="az-candles__product-wrapper">
+              {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
+              <div class="az-candles__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
+                   data-candles-product 
+                   data-category="{{ category_token }}"
+                   data-scent-family="{{ scent_family | handle }}"
+                   data-price="{{ product.price }}"
+                   data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
+                <a class="az-prod__link" href="{{ product.url }}">
+                  <div class="az-prod__media">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
+                    {% else %}
+                      <div class="az-prod__placeholder"></div>
+                    {% endif %}
+                    {% if on_sale %}
+                      <span class="az-prod__badge">SALE</span>
+                    {% endif %}
+                  </div>
+                  <div class="az-prod__body">
+                    <h3 class="az-prod__title">{{ product.title }}</h3>
+                    <div class="az-prod__price">
+                      <span class="az-prod__price-current">{{ product.price | money }}</span>
+                      {% if on_sale %}
+                        <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+
+                <div class="az-prod__actions">
+                  {% form 'product', product, class: 'az-prod__form' %}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                      {% if product.selected_or_first_available_variant.available %}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                          <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+                          <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Add to cart
+                      {% else %}
+                        Sold out
+                      {% endif %}
+                    </button>
+                  {% endform %}
+                </div>
+              </div>
+              
+              <!-- Candle Details -->
+              <div class="az-candles__product-details">
+                <div class="az-candles__product-meta">
+                  <span class="az-candles__product-burn">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
+                      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12C11 10.5 8.5 8 8.5 8C8.5 8 6 10.5 6 12A2.5 2.5 0 0 0 8.5 14.5Z" fill="currentColor"/>
+                      <path d="M12 2C12 2 9 4 9 7C9 9 11 11 12 11C13 11 15 9 15 7C15 4 12 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+                      <path d="M12 22V11" stroke="currentColor" stroke-width="2"/>
+                    </svg>
+                    {{ burn_time }}
+                  </span>
+                  <span class="az-candles__product-separator">|</span>
+                  <span class="az-candles__product-family">{{ scent_family }}</span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        <div class="az-candles__empty" data-candles-empty hidden>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12C11 10.5 8.5 8 8.5 8C8.5 8 6 10.5 6 12A2.5 2.5 0 0 0 8.5 14.5Z" fill="currentColor"/>
+            <path d="M12 2C12 2 9 4 9 7C9 9 11 11 12 11C13 11 15 9 15 7C15 4 12 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M12 22V11" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p>No products found matching your filters.</p>
+          <button type="button" class="az-candles__reset-btn" data-candles-reset>Reset Collection</button>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Candle Care Guide -->
+  <div class="az-candles__guide">
+    <div class="page-width az-candles__guide-inner">
+      <div class="az-candles__guide-visual">
+        <div class="az-candles__guide-image">
+          <div class="az-candles__guide-placeholder"></div>
+        </div>
+      </div>
+      <div class="az-candles__guide-content">
+        <div class="az-candles__guide-eyebrow">Candle Care</div>
+        <h2 class="az-candles__guide-title">
+          Perfect <span class="az-candles__guide-title-italic">rituals</span>
+        </h2>
+        <div class="az-candles__guide-steps">
+          <div class="az-candles__guide-step">
+            <div class="az-candles__guide-step-number">1</div>
+            <div class="az-candles__guide-step-content">
+              <div class="az-candles__guide-step-title">First Burn</div>
+              <p class="az-candles__guide-step-desc">Allow the candle to burn until the entire top layer of wax is melted. This prevents tunneling and ensures an even burn.</p>
+            </div>
+          </div>
+          <div class="az-candles__guide-step">
+            <div class="az-candles__guide-step-number">2</div>
+            <div class="az-candles__guide-step-content">
+              <div class="az-candles__guide-step-title">Wick Trimming</div>
+              <p class="az-candles__guide-step-desc">Before each burn, trim the wick to 1/4 inch. This prevents sooting and ensures a clean, even flame.</p>
+            </div>
+          </div>
+          <div class="az-candles__guide-step">
+            <div class="az-candles__guide-step-number">3</div>
+            <div class="az-candles__guide-step-content">
+              <div class="az-candles__guide-step-title">Burn Time</div>
+              <p class="az-candles__guide-step-desc">Never burn for more than 4 hours at a time. Let the candle cool completely before relighting.</p>
+            </div>
+          </div>
+        </div>
+        <a href="{{ candles_collection.url }}" class="az-candles__guide-btn">
+          Shop All Candles
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Candles",
+  "tag": "section",
+  "class": "section-main-candles",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "CANDLES"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Premium Scented Candles"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Transform your space with our handcrafted candles, each one carefully designed to create the perfect ambiance for any moment."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Candles"
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,314 @@
+{% liquid
+  assign year_now = 'now' | date: '%Y'
+  assign brand_title = 'AROMAZUR'
+  assign brand_tagline = "Les Parfums de la Côte d'Azur"
+  assign brand_description = "Aromazur embodies the refined elegance of the French Riviera, where timeless sophistication meets modern artistry. Inspired by the perfumery heritage of Grasse, each creation reflects a delicate balance of nature, emotion, and savoir‑faire."
+  assign currency_code = 'USD'
+
+  assign all_url = routes.all_products_collection_url
+
+  assign diffusers_collection = collections['scent-diffusers']
+  if diffusers_collection == blank
+    assign diffusers_collection = collections['diffusers']
+  endif
+
+  assign oils_collection = collections['fragrance-oils']
+  if oils_collection == blank
+    assign oils_collection = collections['diffuser-oils']
+  endif
+
+  assign voyage_collection = collections['voyage']
+  if voyage_collection == blank
+    assign voyage_collection = collections['scent-voyage']
+  endif
+
+  assign candles_collection = collections['candles']
+
+  assign perfumes_collection = collections['perfumes']
+  if perfumes_collection == blank
+    assign perfumes_collection = collections['fragrances']
+  endif
+
+  if diffusers_collection != blank
+    assign diffusers_url = diffusers_collection.url
+  else
+    assign diffusers_url = all_url
+  endif
+
+  if oils_collection != blank
+    assign oils_url = oils_collection.url
+  else
+    assign oils_url = all_url
+  endif
+
+  if voyage_collection != blank
+    assign voyage_url = voyage_collection.url
+  else
+    assign voyage_url = all_url
+  endif
+
+  if candles_collection != blank
+    assign candles_url = candles_collection.url
+  else
+    assign candles_url = all_url
+  endif
+
+  if perfumes_collection != blank
+    assign perfumes_url = perfumes_collection.url
+  else
+    assign perfumes_url = all_url
+  endif
+%}
+
+<footer class="az-footer" data-section-id="{{ section.id }}">
+  <div aria-hidden="true" class="az-footer__bg">
+    <div class="az-footer__radial az-footer__radial--gold"></div>
+    <div class="az-footer__radial az-footer__radial--white-1"></div>
+    <div class="az-footer__radial az-footer__radial--white-2"></div>
+  </div>
+
+  <div class="page-width az-footer__container">
+    <div class="az-footer__grid">
+      <div class="az-footer__col">
+        <div class="az-footer__brand">{{ brand_title }}</div>
+        <p class="az-footer__tagline">{{ brand_tagline }}</p>
+        <p class="az-footer__desc">{{ brand_description }}</p>
+
+        <div class="az-footer__social">
+          <a class="az-footer__social-btn" href="#" aria-label="Instagram">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M7 2H17C20.3137 2 23 4.68629 23 8V18C23 21.3137 20.3137 24 17 24H7C3.68629 24 1 21.3137 1 18V8C1 4.68629 3.68629 2 7 2Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M12 17.2C14.8719 17.2 17.2 14.8719 17.2 12C17.2 9.12812 14.8719 6.8 12 6.8C9.12812 6.8 6.8 9.12812 6.8 12C6.8 14.8719 9.12812 17.2 12 17.2Z" stroke="currentColor" stroke-width="1.8"/>
+              <path d="M18.3 6.2H18.31" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            </svg>
+          </a>
+          <a class="az-footer__social-btn" href="#" aria-label="Facebook">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M14 8.5V7.2C14 6.53726 14.5373 6 15.2 6H17V2H15.2C12.3281 2 10 4.32812 10 7.2V8.5H7V12H10V22H14V12H17L18 8.5H14Z" fill="currentColor"/>
+            </svg>
+          </a>
+          <a class="az-footer__social-btn" href="#" aria-label="Twitter">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18.6 2H22L14.6 10.46L23.3 22H16.5L11.2 15.06L5.1 22H1.7L9.7 12.86L1.4 2H8.4L13.2 8.28L18.6 2ZM17.4 19.8H19.3L7.4 4.08H5.3L17.4 19.8Z" fill="currentColor"/>
+            </svg>
+          </a>
+        </div>
+      </div>
+
+      <div class="az-footer__col">
+        <div class="az-footer__label">Shop</div>
+        <ul class="az-footer__links" role="list">
+          <li><a href="{{ all_url }}">All products</a></li>
+          <li><a href="{{ diffusers_url }}">Diffusers</a></li>
+          <li><a href="{{ oils_url }}">Diffuser oils</a></li>
+          <li><a href="{{ candles_url }}">Candles</a></li>
+          <li><a href="{{ perfumes_url }}">Perfumes</a></li>
+        </ul>
+      </div>
+
+      <div class="az-footer__col">
+        <div class="az-footer__label">Company</div>
+        <ul class="az-footer__links" role="list">
+          <li><a href="{{ voyage_url }}">Scent Voyage</a></li>
+          <li><a href="/pages/contact">Contact</a></li>
+          <li><a href="#faq">FAQ</a></li>
+        </ul>
+      </div>
+
+      <div class="az-footer__col">
+        <div class="az-footer__label">Stay in the loop</div>
+        <p class="az-footer__note">Get product updates and curated drops. No spam.</p>
+
+        {% form 'customer', id: 'FooterNewsletter', class: 'az-footer__form' %}
+          <input type="hidden" name="contact[tags]" value="newsletter">
+          <label class="sr-only" for="FooterEmail">Email</label>
+          <input
+            id="FooterEmail"
+            type="email"
+            name="contact[email]"
+            value="{{ form.email }}"
+            placeholder="Enter your email"
+            autocomplete="email"
+            inputmode="email"
+            required>
+          <button type="submit">Subscribe</button>
+          {% if form.posted_successfully? %}
+            <p class="az-footer__success">Thanks for subscribing.</p>
+          {% endif %}
+          {% if form.errors %}
+            <p class="az-footer__error">{{ form.errors | default_errors }}</p>
+          {% endif %}
+          <p class="az-footer__fineprint">By subscribing, you agree to receive emails from AROMAZUR.</p>
+        {% endform %}
+      </div>
+    </div>
+
+    <div class="az-footer__bottom">
+      <p>&copy; {{ year_now }} {{ brand_title }}. All rights reserved.</p>
+      <div class="az-footer__bottom-right" aria-label="Support and payments">
+        <div class="az-footer__mini-icons" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2L20 6V12C20 17 16.5 21 12 22C7.5 21 4 17 4 12V6L12 2Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 7H17V17H3V7Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M17 10H21L23 12V17H17V10Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 20C8.10457 20 9 19.1046 9 18C9 16.8954 8.10457 16 7 16C5.89543 16 5 16.8954 5 18C5 19.1046 5.89543 20 7 20Z" fill="currentColor"/>
+            <path d="M19 20C20.1046 20 21 19.1046 21 18C21 16.8954 20.1046 16 19 16C17.8954 16 17 16.8954 17 18C17 19.1046 17.8954 20 19 20Z" fill="currentColor"/>
+          </svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M3 7C3 5.89543 3.89543 5 5 5H19C20.1046 5 21 5.89543 21 7V17C21 18.1046 20.1046 19 19 19H5C3.89543 19 3 18.1046 3 17V7Z" stroke="currentColor" stroke-width="2"/>
+            <path d="M3 9H21" stroke="currentColor" stroke-width="2"/>
+            <path d="M7 15H12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="az-footer__currency">{{ currency_code }}</span>
+      </div>
+    </div>
+
+    <button class="az-footer__top" type="button" aria-label="Back to top" data-scroll-top>
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M12 5L5 12H9V19H15V12H19L12 5Z" fill="currentColor"/>
+      </svg>
+    </button>
+  </div>
+</footer>
+
+{% schema %}
+{
+  "name": "Footer",
+  "tag": "section",
+  "class": "section-footer",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Brand"
+    },
+    {
+      "type": "text",
+      "id": "brand_title",
+      "label": "Brand title",
+      "default": "AROMAZUR"
+    },
+    {
+      "type": "text",
+      "id": "brand_tagline",
+      "label": "Tagline",
+      "default": "Les Parfums de la Côte d'Azur"
+    },
+    {
+      "type": "textarea",
+      "id": "brand_description",
+      "label": "Description",
+      "default": "Aromazur embodies the refined elegance of the French Riviera, where timeless sophistication meets modern artistry. Inspired by the perfumery heritage of Grasse, each creation reflects a delicate balance of nature, emotion, and savoir-faire."
+    },
+    {
+      "type": "header",
+      "content": "Social"
+    },
+    {
+      "type": "url",
+      "id": "instagram_url",
+      "label": "Instagram URL"
+    },
+    {
+      "type": "url",
+      "id": "facebook_url",
+      "label": "Facebook URL"
+    },
+    {
+      "type": "url",
+      "id": "twitter_url",
+      "label": "X/Twitter URL"
+    },
+    {
+      "type": "header",
+      "content": "Menus"
+    },
+    {
+      "type": "text",
+      "id": "shop_heading",
+      "label": "Shop heading",
+      "default": "SHOP"
+    },
+    {
+      "type": "link_list",
+      "id": "shop_menu",
+      "label": "Shop menu"
+    },
+    {
+      "type": "text",
+      "id": "company_heading",
+      "label": "Company heading",
+      "default": "COMPANY"
+    },
+    {
+      "type": "link_list",
+      "id": "company_menu",
+      "label": "Company menu"
+    },
+    {
+      "type": "header",
+      "content": "Newsletter"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_newsletter",
+      "label": "Show newsletter form",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "newsletter_heading",
+      "label": "Newsletter heading",
+      "default": "STAY IN THE LOOP"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_text",
+      "label": "Newsletter text",
+      "default": "Get product updates and curated drops. No spam."
+    },
+    {
+      "type": "text",
+      "id": "newsletter_placeholder",
+      "label": "Email placeholder",
+      "default": "Enter your email"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_button",
+      "label": "Button label",
+      "default": "Subscribe"
+    },
+    {
+      "type": "text",
+      "id": "newsletter_success",
+      "label": "Success message",
+      "default": "Thanks for subscribing."
+    },
+    {
+      "type": "textarea",
+      "id": "newsletter_disclaimer",
+      "label": "Disclaimer",
+      "default": "By subscribing, you agree to receive emails from AROMAZUR."
+    },
+    {
+      "type": "header",
+      "content": "Bottom bar"
+    },
+    {
+      "type": "text",
+      "id": "bottom_left_text",
+      "label": "Bottom left text",
+      "default": "All rights reserved."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Footer"
+    }
+  ]
+}
+{% endschema %}

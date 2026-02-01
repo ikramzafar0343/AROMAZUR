@@ -1,0 +1,120 @@
+{% liquid
+  assign titles = 'Nature & Emotion|Radiant & Personal|Côte d’Azur Elegance|Grasse Heritage|Riviera Glow|Modern Artistry|Timeless Notes|Sunlit Botanicals|Savoir‑faire|Signature Trails' | split: '|'
+  assign subtitles = 'Delicate balance • Savoir‑faire|Subtle yet unforgettable|Lavender • Mimosa • Mediterranean|Rose • Jasmine • Bergamot|Citrus • Neroli • Sea breeze|Crafted in Grasse spirit|Elegant • Minimal • Modern|Fresh • Bright • Airy|Nature • Emotion • Luxury|Made to linger' | split: '|'
+  assign brand_label = 'AROMAZUR'
+  assign sample_images = 'news-01.svg|news-02.svg|news-03.svg|news-04.svg|news-05.svg|news-06.svg|news-07.svg|news-08.svg|news-09.svg|news-10.svg' | split: '|'
+%}
+
+<section class="az-news" aria-label="Aromazur highlights">
+  <div class="az-news__viewport">
+    <div class="az-news__track" data-marquee data-marquee-row=".az-news__row" data-marquee-direction="ltr" style="--az-news-duration: 40s;">
+      {% for i in (1..2) %}
+        <div class="az-news__row" aria-hidden="{% if i == 2 %}true{% else %}false{% endif %}">
+          {% if section.blocks.size > 0 %}
+            {% for block in section.blocks limit: 10 %}
+              {% liquid
+                assign idx = forloop.index0
+                assign title = titles[idx] | default: brand_label
+                assign subtitle = subtitles[idx] | default: ''
+                assign bg_image = block.settings.background_image
+                assign bg_video_url = block.settings.background_video_url | strip
+                assign sample = sample_images[idx] | default: 'news-01.svg'
+              %}
+
+              <article class="az-news__card" {{ block.shopify_attributes }}>
+                <div class="az-news__media" aria-hidden="true">
+                  {% if bg_video_url != blank %}
+                    <video class="az-news__video" playsinline muted loop autoplay preload="none">
+                      <source src="{{ bg_video_url }}" type="video/mp4">
+                    </video>
+                  {% endif %}
+
+                  {% if bg_image != blank %}
+                    {{ bg_image | image_url: width: 1600 | image_tag: loading: 'lazy', decoding: 'async', class: 'az-news__image', alt: '' }}
+                  {% elsif bg_video_url == blank %}
+                    <img class="az-news__image" src="{{ sample | asset_url }}" alt="" loading="lazy" decoding="async">
+                  {% endif %}
+
+                  <div class="az-news__dots" aria-hidden="true"></div>
+                  <div class="az-news__shade" aria-hidden="true"></div>
+                </div>
+
+                <div class="az-news__content">
+                  <div class="az-news__label">{{ brand_label }}</div>
+                  <div class="az-news__title">{{ title }}</div>
+                  {% if subtitle != blank %}
+                    <div class="az-news__subtitle">{{ subtitle }}</div>
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          {% else %}
+            {% for n in (1..10) %}
+              {% liquid
+                assign idx = forloop.index0
+                assign title = titles[idx] | default: brand_label
+                assign subtitle = subtitles[idx] | default: ''
+                assign sample = sample_images[idx] | default: 'news-01.svg'
+              %}
+
+              <article class="az-news__card">
+                <div class="az-news__media" aria-hidden="true">
+                  <img class="az-news__image" src="{{ sample | asset_url }}" alt="" loading="lazy" decoding="async">
+                  <div class="az-news__dots" aria-hidden="true"></div>
+                  <div class="az-news__shade" aria-hidden="true"></div>
+                </div>
+
+                <div class="az-news__content">
+                  <div class="az-news__label">{{ brand_label }}</div>
+                  <div class="az-news__title">{{ title }}</div>
+                  {% if subtitle != blank %}
+                    <div class="az-news__subtitle">{{ subtitle }}</div>
+                  {% endif %}
+                </div>
+              </article>
+            {% endfor %}
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home newsletter marquee",
+  "tag": "section",
+  "class": "section-home-newsletter-marquee",
+  "settings": [],
+  "blocks": [
+    {
+      "type": "item",
+      "name": "Card",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "background_image",
+          "label": "Background image"
+        },
+        {
+          "type": "url",
+          "id": "background_video_url",
+          "label": "Background video URL (MP4)"
+        }
+      ]
+    }
+  ],
+  "max_blocks": 10,
+  "presets": [
+    {
+      "name": "Home newsletter marquee",
+      "blocks": [
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" },
+        { "type": "item" }
+      ]
+    }
+  ]
+}
+{% endschema %}

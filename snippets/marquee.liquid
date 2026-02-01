@@ -1,0 +1,40 @@
+{% comment %}
+  Marquee Component - Reusable marquee with direction, speed, and pause on hover
+  
+  Parameters:
+  - children: Content to display in marquee (passed via block or content)
+  - direction: 'left' or 'right' (default: 'left')
+  - speed: Animation duration in seconds (default: 30)
+  - pause_on_hover: Boolean to pause on hover (default: true)
+  - class: Additional CSS classes
+  - gap: Gap between items (default: 32px)
+{% endcomment %}
+
+{% liquid
+  assign direction = direction | default: 'left'
+  assign speed = speed | default: 30
+  assign pause_on_hover = pause_on_hover | default: true
+  assign gap = gap | default: 32
+  assign marquee_class = 'az-marquee-component'
+  if pause_on_hover
+    assign marquee_class = marquee_class | append: ' az-marquee-component--pause-on-hover'
+  endif
+  if class != blank
+    assign marquee_class = marquee_class | append: ' ' | append: class
+  endif
+%}
+
+<div class="{{ marquee_class }}" data-marquee-component data-marquee-direction="{{ direction }}" data-marquee-speed="{{ speed }}" data-marquee-gap="{{ gap }}">
+  <div class="az-marquee-component__row" style="--marquee-duration: {{ speed }}s; --marquee-gap: {{ gap }}px; animation-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %};">
+    {{ children }}
+    {{ children }}
+    {{ children }}
+    {{ children }}
+  </div>
+  <div class="az-marquee-component__row" style="--marquee-duration: {{ speed }}s; --marquee-gap: {{ gap }}px; animation-direction: {% if direction == 'right' %}reverse{% else %}normal{% endif %};" aria-hidden="true">
+    {{ children }}
+    {{ children }}
+    {{ children }}
+    {{ children }}
+  </div>
+</div>

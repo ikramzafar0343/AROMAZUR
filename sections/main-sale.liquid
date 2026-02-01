@@ -1,0 +1,263 @@
+{% liquid
+  assign sale_collection = collections['sale']
+  if sale_collection == blank
+    assign sale_collection = collections['all']
+  endif
+  
+  assign sale_products = sale_collection.products
+  
+  assign categories_list = ''
+  for product in sale_products limit: 100
+    assign product_type = product.type | downcase
+    if categories_list == blank
+      assign categories_list = product_type
+    else
+      unless categories_list contains product_type
+        assign categories_list = categories_list | append: '|' | append: product_type
+      endunless
+    endif
+  endfor
+  assign categories_array = categories_list | split: '|'
+  
+  assign min_price = 0
+  assign max_price = 1000
+  for product in sale_products limit: 50
+    assign product_price = product.price | divided_by: 100.0
+    if product_price < min_price or min_price == 0
+      assign min_price = product_price
+    endif
+    if product_price > max_price
+      assign max_price = product_price
+    endif
+  endfor
+%}
+
+{% if collection.handle == 'sale' %}
+<section class="az-sale az-page-transition" data-sale-page>
+  <!-- Hero Header -->
+  <div class="az-sale__hero">
+    <div class="page-width az-sale__hero-inner">
+      <div class="az-sale__hero-content">
+        <div class="az-sale__eyebrow">SALE</div>
+        <h1 class="az-sale__title">Limited Time Offers</h1>
+        <p class="az-sale__desc">Discover incredible savings on our premium fragrances, diffusers, and home scents. Don't miss out on these exclusive deals.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width az-sale__container">
+    <div class="az-sale__layout">
+      <!-- Filter Sidebar -->
+      <aside class="az-sale__sidebar" data-sale-sidebar>
+        <div class="az-sale__sidebar-header">
+          <h2 class="az-sale__sidebar-title">Filters</h2>
+          <button class="az-sale__sidebar-close" type="button" data-sale-sidebar-close aria-label="Close filters">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+
+        <div class="az-sale__filters">
+          <!-- Category Filter -->
+          <div class="az-sale__filter-group">
+            <h3 class="az-sale__filter-title">Category</h3>
+            <div class="az-sale__filter-options">
+              <label class="az-sale__filter-option">
+                <input type="radio" name="sale-category" value="all" data-sale-filter="category" checked>
+                <span>All Products</span>
+              </label>
+              {% for category in categories_array %}
+                {% if category != blank %}
+                  <label class="az-sale__filter-option">
+                    <input type="radio" name="sale-category" value="{{ category | handle }}" data-sale-filter="category">
+                    <span>{{ category }}</span>
+                  </label>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+
+          <!-- Price Range Filter -->
+          <div class="az-sale__filter-group">
+            <h3 class="az-sale__filter-title">Price Range</h3>
+            <div class="az-sale__price-range">
+              <div class="az-sale__price-inputs">
+                <input type="number" class="az-sale__price-input" data-sale-price-min placeholder="{{ min_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+                <span>to</span>
+                <input type="number" class="az-sale__price-input" data-sale-price-max placeholder="{{ max_price | times: 100 | money_without_currency }}" min="0" step="0.01">
+              </div>
+              <div class="az-sale__price-slider">
+                <input type="range" class="az-sale__range" data-sale-range-min min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ min_price | times: 100 }}" step="1">
+                <input type="range" class="az-sale__range" data-sale-range-max min="{{ min_price | times: 100 }}" max="{{ max_price | times: 100 }}" value="{{ max_price | times: 100 }}" step="1">
+              </div>
+            </div>
+          </div>
+
+          <button type="button" class="az-sale__reset" data-sale-reset>Reset Filters</button>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="az-sale__main">
+        <!-- Toolbar -->
+        <div class="az-sale__toolbar">
+          <div class="az-sale__results">
+            <span class="az-sale__results-label">Sale Items</span>
+            <span class="az-sale__results-count">(<span data-sale-count>{{ sale_products.size }}</span> items)</span>
+          </div>
+          
+          <div class="az-sale__toolbar-actions">
+            <button class="az-sale__filter-toggle" type="button" data-sale-sidebar-toggle>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                <path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+              Filters
+            </button>
+            
+            <select class="az-sale__sort" data-sale-sort>
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="discount-desc">Discount: Highest First</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Product Grid -->
+        <div class="az-sale__grid" data-sale-grid>
+          {% for product in sale_products %}
+            {% liquid
+              assign category_token = ''
+              assign type_lc = product.type | downcase
+              case type_lc
+                when 'candles'
+                  assign category_token = 'candles'
+                when 'room sprays'
+                  assign category_token = 'room-sprays'
+                when 'fragrance oils'
+                  assign category_token = 'fragrance-oils'
+                when 'perfumes'
+                  assign category_token = 'perfumes'
+                when 'diffusers'
+                  assign category_token = 'diffusers'
+              endcase
+              
+              if category_token == blank
+                assign category_token = type_lc | handle
+              endif
+              
+              assign on_sale = false
+              assign discount_percent = 0
+              if product.compare_at_price > product.price
+                assign on_sale = true
+                assign discount_amount = product.compare_at_price | minus: product.price
+                assign discount_percent = discount_amount | times: 100.0 | divided_by: product.compare_at_price | round
+              endif
+            %}
+            
+            <div class="az-sale__product-wrapper">
+              {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
+              <div class="az-sale__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
+                   data-sale-product 
+                   data-category="{{ category_token }}"
+                   data-price="{{ product.price }}"
+                   data-discount="{% if on_sale %}{{ discount_percent }}{% else %}0{% endif %}"
+                   data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
+                <a class="az-prod__link" href="{{ product.url }}">
+                  <div class="az-prod__media">
+                    {% if product.featured_image %}
+                      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
+                    {% else %}
+                      <div class="az-prod__placeholder"></div>
+                    {% endif %}
+                    {% if on_sale %}
+                      <span class="az-prod__badge">-{{ discount_percent }}%</span>
+                    {% endif %}
+                  </div>
+                  <div class="az-prod__body">
+                    <h3 class="az-prod__title">{{ product.title }}</h3>
+                    <div class="az-prod__price">
+                      <span class="az-prod__price-current">{{ product.price | money }}</span>
+                      {% if on_sale %}
+                        <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
+                      {% endif %}
+                    </div>
+                  </div>
+                </a>
+
+                <div class="az-prod__actions">
+                  {% form 'product', product, class: 'az-prod__form' %}
+                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                    <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                      {% if product.selected_or_first_available_variant.available %}
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
+                          <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
+                          <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+                          <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Add to cart
+                      {% else %}
+                        Sold out
+                      {% endif %}
+                    </button>
+                  {% endform %}
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+
+        <!-- Empty State -->
+        <div class="az-sale__empty" data-sale-empty hidden>
+          <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <path d="M12 2L14.2 8.2L20.8 8.2L15.4 12.1L17.6 18.2L12 14.4L6.4 18.2L8.6 12.1L3.2 8.2L9.8 8.2L12 2Z" stroke="currentColor" stroke-width="2"/>
+          </svg>
+          <p>No sale products found matching your filters.</p>
+          <button type="button" class="az-sale__reset-btn" data-sale-reset>Reset Filters</button>
+        </div>
+      </main>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Sale",
+  "tag": "section",
+  "class": "section-main-sale",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "SALE"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Limited Time Offers"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Discover incredible savings on our premium fragrances, diffusers, and home scents. Don't miss out on these exclusive deals."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Sale"
+    }
+  ]
+}
+{% endschema %}

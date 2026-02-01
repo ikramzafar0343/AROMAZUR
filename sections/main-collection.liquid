@@ -1,0 +1,66 @@
+<section class="main-collection az-page-transition">
+  <div class="page-width">
+    <h1 class="az-fade-in az-fade-in--up">{{ collection.title }}</h1>
+
+    {% if collection.description != blank %}
+      <div class="rte az-fade-in az-fade-in--up az-fade-in--delay-1">
+        {{ collection.description }}
+      </div>
+    {% endif %}
+
+    {% if collection.products_count == 0 %}
+      <p class="az-fade-in az-fade-in--up az-fade-in--delay-2" style="text-align: center; padding: var(--spacing-3xl) 0; color: var(--color-text-muted);">
+        No products found in this collection.
+      </p>
+    {% else %}
+      <ul class="product-grid" role="list">
+        {% for product in collection.products %}
+          {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
+          <li class="product-grid__item az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}">
+            <a href="{{ product.url }}">
+              {% if product.featured_image %}
+                <div style="position: relative; overflow: hidden;">
+                  {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
+                  {% if product.compare_at_price > product.price %}
+                    <span style="position: absolute; top: 12px; left: 12px; background: var(--color-error); color: #fff; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
+                      Sale
+                    </span>
+                  {% endif %}
+                </div>
+              {% else %}
+                <div style="aspect-ratio: 4/5; background: var(--color-border); display: grid; place-items: center; color: var(--color-text-muted);">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4 16L10.5 9.5L14.5 13.5L20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M20 12V20H4V4H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+              {% endif %}
+              <div style="padding: var(--spacing-md);">
+                <div style="font-size: 15px; font-weight: 800; color: var(--color-text); line-height: 1.3; margin-bottom: var(--spacing-xs);">
+                  {{ product.title }}
+                </div>
+                <div style="font-size: 18px; font-weight: 900; color: var(--color-text);">
+                  {{ product.price | money }}
+                  {% if product.compare_at_price > product.price %}
+                    <span style="font-size: 14px; color: var(--color-text-muted); text-decoration: line-through; margin-left: var(--spacing-xs);">
+                      {{ product.compare_at_price | money }}
+                    </span>
+                  {% endif %}
+                </div>
+              </div>
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Collection",
+  "tag": "section",
+  "class": "section-main-collection",
+  "settings": []
+}
+{% endschema %}

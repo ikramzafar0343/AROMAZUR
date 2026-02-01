@@ -1,0 +1,216 @@
+{% liquid
+  assign bg_image = section.settings.background_image
+  assign bg_video_url = section.settings.background_video_url | strip
+  assign card_image = section.settings.card_image
+  assign card_video_url = section.settings.card_video_url | strip
+%}
+
+<section class="az-hero" aria-labelledby="HomeHero-{{ section.id }}" data-hero>
+  <div class="az-hero__bg">
+    {% if bg_video_url != blank %}
+      <video class="az-hero__bg-video" playsinline muted loop autoplay preload="none">
+        <source src="{{ bg_video_url }}" type="video/mp4">
+      </video>
+    {% endif %}
+
+    {% if bg_image != blank %}
+      {{ bg_image | image_url: width: 2400 | image_tag: loading: 'eager', decoding: 'async', class: 'az-hero__bg-image', alt: '' }}
+    {% endif %}
+
+    <div class="az-hero__pattern" aria-hidden="true"></div>
+  </div>
+
+  <div class="page-width az-hero__container">
+    <div class="az-hero__grid">
+      <div class="az-hero__content" data-hero-text>
+        {% if section.settings.eyebrow != blank %}
+          <div class="az-hero__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">
+            <span class="az-hero__spark" aria-hidden="true"></span>
+            <span>{{ section.settings.eyebrow }}</span>
+          </div>
+        {% endif %}
+
+        <h1 id="HomeHero-{{ section.id }}" class="az-hero__headline az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1">
+          {{ section.settings.headline }}
+        </h1>
+
+        {% if section.settings.subtext != blank %}
+          <p class="az-hero__subtext az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-2">{{ section.settings.subtext }}</p>
+        {% endif %}
+
+        <div class="az-hero__cta az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-3">
+          {% if section.settings.primary_cta_label != blank and section.settings.primary_cta_url != blank %}
+            <a class="az-hero__btn az-hero__btn--primary" href="{{ section.settings.primary_cta_url }}">
+              {{ section.settings.primary_cta_label }}
+              <span class="az-hero__arrow" aria-hidden="true">→</span>
+            </a>
+          {% endif %}
+
+          {% if section.settings.secondary_cta_label != blank and section.settings.secondary_cta_url != blank %}
+            <a class="az-hero__btn az-hero__btn--secondary" href="{{ section.settings.secondary_cta_url }}">
+              {{ section.settings.secondary_cta_label }}
+            </a>
+          {% endif %}
+        </div>
+
+        <div class="az-hero__prices az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-4">
+          {% if section.settings.price_1_value != blank and section.settings.price_1_label != blank %}
+            <div class="az-hero__price-card">
+              <div class="az-hero__price">{{ section.settings.price_1_value }}</div>
+              <div class="az-hero__price-label">{{ section.settings.price_1_label }}</div>
+            </div>
+          {% endif %}
+          {% if section.settings.price_2_value != blank and section.settings.price_2_label != blank %}
+            <div class="az-hero__price-card">
+              <div class="az-hero__price">{{ section.settings.price_2_value }}</div>
+              <div class="az-hero__price-label">{{ section.settings.price_2_label }}</div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <div class="az-hero__visual az-fade-in az-fade-in--left az-fade-in--slow az-fade-in--delay-2" data-hero-visual>
+        <div class="az-hero__glow" aria-hidden="true"></div>
+        <div class="az-hero__tilt" data-tilt>
+          <div class="az-hero__card">
+            <div class="az-hero__media" data-hero-visual-media>
+              {% if card_video_url != blank %}
+                <video class="az-hero__card-video" playsinline muted loop preload="none" data-hero-visual-video {% if card_image != blank %}poster="{{ card_image | image_url: width: 1200 }}"{% endif %}>
+                  <source src="{{ card_video_url }}" type="video/mp4">
+                </video>
+              {% endif %}
+
+              {% if card_image != blank %}
+                {{ card_image | image_url: width: 1200 | image_tag: loading: 'eager', decoding: 'async', class: 'az-hero__card-image', alt: section.settings.card_image_alt }}
+              {% endif %}
+
+              <div class="az-hero__media-overlay" aria-hidden="true"></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home hero",
+  "tag": "section",
+  "class": "section-home-hero",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow",
+      "default": "Limited drops"
+    },
+    {
+      "type": "text",
+      "id": "headline",
+      "label": "Headline",
+      "default": "Les Parfums de la Côte d'Azur"
+    },
+    {
+      "type": "textarea",
+      "id": "subtext",
+      "label": "Subtext",
+      "default": "Refined home fragrance inspired by the French Riviera."
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary button label",
+      "default": "Shop now"
+    },
+    {
+      "type": "url",
+      "id": "primary_cta_url",
+      "label": "Primary button link"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary button label",
+      "default": "How it works"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_url",
+      "label": "Secondary button link"
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image"
+    },
+    {
+      "type": "url",
+      "id": "background_video_url",
+      "label": "Background video URL (MP4)"
+    },
+    {
+      "type": "header",
+      "content": "Visual card"
+    },
+    {
+      "type": "image_picker",
+      "id": "card_image",
+      "label": "Card image"
+    },
+    {
+      "type": "text",
+      "id": "card_image_alt",
+      "label": "Card image alt",
+      "default": "AROMAZUR premium home fragrance diffuser and oils"
+    },
+    {
+      "type": "url",
+      "id": "card_video_url",
+      "label": "Card video URL (MP4)"
+    },
+    {
+      "type": "header",
+      "content": "Price cards"
+    },
+    {
+      "type": "text",
+      "id": "price_1_value",
+      "label": "Price 1 value",
+      "default": "$19"
+    },
+    {
+      "type": "text",
+      "id": "price_1_label",
+      "label": "Price 1 label",
+      "default": "Fragrance Oils"
+    },
+    {
+      "type": "text",
+      "id": "price_2_value",
+      "label": "Price 2 value",
+      "default": "$40"
+    },
+    {
+      "type": "text",
+      "id": "price_2_label",
+      "label": "Price 2 label",
+      "default": "Mini Diffusers"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Home hero"
+    }
+  ]
+}
+{% endschema %}

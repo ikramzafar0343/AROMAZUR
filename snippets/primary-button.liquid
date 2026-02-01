@@ -1,0 +1,61 @@
+{% comment %}
+  PrimaryButton Component - Reusable primary button with animated effects
+  
+  Parameters:
+  - text: Button text (required)
+  - url: Button link URL (optional, if not provided, renders as button)
+  - size: 'sm', 'md', or 'lg' (default: 'md')
+  - class: Additional CSS classes
+  - type: Button type ('button', 'submit', 'reset') - only used if url is blank
+  - disabled: Boolean to disable button
+  - loading: Boolean to show loading state
+  - aria_label: ARIA label for accessibility
+  - id: Button ID
+{% endcomment %}
+
+{% liquid
+  assign size = size | default: 'md'
+  assign button_class = 'az-btn az-btn--primary'
+  assign button_class = button_class | append: ' az-btn--' | append: size
+  if class != blank
+    assign button_class = button_class | append: ' ' | append: class
+  endif
+  if loading
+    assign button_class = button_class | append: ' is-loading'
+  endif
+  
+  assign button_type = type | default: 'button'
+  if url != blank
+    assign is_link = true
+  else
+    assign is_link = false
+  endif
+%}
+
+{% if is_link %}
+  <a href="{{ url }}" 
+     class="{{ button_class }}"
+     {% if disabled %}aria-disabled="true" tabindex="-1" style="pointer-events: none; opacity: 0.5;"{% endif %}
+     {% if aria_label != blank %}aria-label="{{ aria_label }}"{% endif %}
+     {% if id != blank %}id="{{ id }}"{% endif %}>
+    <span class="az-btn__content">
+      {% if loading %}
+        <span class="az-btn__spinner" aria-hidden="true"></span>
+      {% endif %}
+      {{ text }}
+    </span>
+  </a>
+{% else %}
+  <button type="{{ button_type }}"
+          class="{{ button_class }}"
+          {% if disabled %}disabled{% endif %}
+          {% if aria_label != blank %}aria-label="{{ aria_label }}"{% endif %}
+          {% if id != blank %}id="{{ id }}"{% endif %}>
+    <span class="az-btn__content">
+      {% if loading %}
+        <span class="az-btn__spinner" aria-hidden="true"></span>
+      {% endif %}
+      {{ text }}
+    </span>
+  </button>
+{% endif %}

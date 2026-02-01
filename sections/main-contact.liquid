@@ -1,0 +1,135 @@
+{% if page.handle == 'contact' or template.name == 'page' %}
+<section class="az-contact az-page-transition" data-contact-page>
+  <!-- Hero Header -->
+  <div class="az-contact__hero">
+    <div class="page-width az-contact__hero-inner">
+      <div class="az-contact__hero-content">
+        <div class="az-contact__eyebrow">Support</div>
+        <h1 class="az-contact__title">Contact</h1>
+        <p class="az-contact__desc">Need guidance selecting a fragrance that reflects the delicate balance of nature, emotion, and savoir‑faire? Our team is here to help you discover the essence of the French Riviera.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="page-width az-contact__container">
+    <div class="az-contact__card">
+      <!-- Success State -->
+      <div class="az-contact__success" data-contact-success {% unless form.posted_successfully? %}hidden{% endunless %}>
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="currentColor" stroke-width="2"/>
+          <path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <h3 class="az-contact__success-title">Message sent</h3>
+        <p class="az-contact__success-desc">Thanks for reaching out. We'll get back to you shortly.</p>
+        <button type="button" class="az-contact__success-btn" data-contact-reset>
+          Send another message
+        </button>
+      </div>
+
+      <!-- Contact Form -->
+      <div class="az-contact__form-wrapper" data-contact-form {% if form.posted_successfully? %}hidden{% endif %}>
+        {% form 'contact', class: 'az-contact__form', id: 'ContactForm' %}
+          <div class="az-contact__field">
+            <label class="az-contact__label" for="ContactFormName-{{ section.id }}">
+              Name
+            </label>
+            <input
+              type="text"
+              id="ContactFormName-{{ section.id }}"
+              class="az-contact__input"
+              name="contact[name]"
+              value="{% if form.name %}{{ form.name }}{% endif %}"
+              autocomplete="name"
+              required
+              data-contact-name>
+            {% if form.errors contains 'name' %}
+              <span class="az-contact__error">{{ form.errors.translated_fields['name'] | capitalize }} {{ form.errors.messages['name'] }}</span>
+            {% endif %}
+          </div>
+
+          <div class="az-contact__field">
+            <label class="az-contact__label" for="ContactFormEmail-{{ section.id }}">
+              Email
+            </label>
+            <input
+              type="email"
+              id="ContactFormEmail-{{ section.id }}"
+              class="az-contact__input"
+              name="contact[email]"
+              value="{% if form.email %}{{ form.email }}{% endif %}"
+              autocomplete="email"
+              required
+              data-contact-email>
+            {% if form.errors contains 'email' %}
+              <span class="az-contact__error">{{ form.errors.translated_fields['email'] | capitalize }} {{ form.errors.messages['email'] }}</span>
+            {% endif %}
+          </div>
+
+          <div class="az-contact__field">
+            <label class="az-contact__label" for="ContactFormMessage-{{ section.id }}">
+              Message
+            </label>
+            <textarea
+              id="ContactFormMessage-{{ section.id }}"
+              class="az-contact__textarea"
+              name="contact[body]"
+              rows="6"
+              required
+              data-contact-message>{% if form.body %}{{ form.body }}{% endif %}</textarea>
+            {% if form.errors contains 'body' %}
+              <span class="az-contact__error">{{ form.errors.translated_fields['body'] | capitalize }} {{ form.errors.messages['body'] }}</span>
+            {% endif %}
+          </div>
+
+          {% if form.errors %}
+            <div class="az-contact__error-message">
+              {{ form.errors | default_errors }}
+            </div>
+          {% endif %}
+
+          <button type="submit" class="az-contact__submit" data-contact-submit>
+            Send message
+          </button>
+        {% endform %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Contact",
+  "tag": "section",
+  "class": "section-main-contact",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Hero Section"
+    },
+    {
+      "type": "text",
+      "id": "eyebrow",
+      "label": "Eyebrow text",
+      "default": "Support"
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Contact"
+    },
+    {
+      "type": "textarea",
+      "id": "description",
+      "label": "Description",
+      "default": "Need guidance selecting a fragrance that reflects the delicate balance of nature, emotion, and savoir‑faire? Our team is here to help you discover the essence of the French Riviera."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Contact"
+    }
+  ]
+}
+{% endschema %}

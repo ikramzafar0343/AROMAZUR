@@ -1,0 +1,52 @@
+<section class="az-nl" id="newsletter" aria-labelledby="NlTitle-{{ section.id }}">
+  <div class="page-width az-nl__container">
+    <div class="az-nl__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">NEWSLETTER</div>
+    <h2 class="az-nl__title az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1" id="NlTitle-{{ section.id }}">Discover the essence of the French Riviera</h2>
+    <p class="az-nl__desc az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-2">Subscribe to receive exclusive offers, new arrivals inspired by Grasse, and insights into the art of French perfumery.</p>
+
+    {% form 'customer', class: 'az-nl__form' %}
+      <input type="hidden" name="contact[tags]" value="newsletter">
+      <div class="az-nl__fields">
+        <div class="az-nl__field">
+          <label class="az-nl__label" for="NlEmail-{{ section.id }}">Email</label>
+          <input
+            id="NlEmail-{{ section.id }}"
+            class="az-nl__input"
+            type="email"
+            name="contact[email]"
+            autocomplete="email"
+            required
+            placeholder="Enter your email address"
+            {% if form.email %}value="{{ form.email }}"{% endif %}
+          >
+        </div>
+        <button class="az-nl__btn" type="submit">SUBSCRIBE</button>
+      </div>
+
+      {% if form.posted_successfully? %}
+        <div class="az-nl__msg az-nl__msg--success">Thanks for subscribing.</div>
+      {% elsif form.errors %}
+        <div class="az-nl__msg az-nl__msg--error">{{ form.errors | default_errors }}</div>
+      {% endif %}
+    {% endform %}
+
+    <div class="az-nl__note">
+      <span class="az-nl__lock" aria-hidden="true">🔒</span>
+      <span>No spam. Unsubscribe anytime with one click.</span>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Home newsletter CTA",
+  "tag": "section",
+  "class": "section-home-newsletter-cta",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Home newsletter CTA"
+    }
+  ]
+}
+{% endschema %}

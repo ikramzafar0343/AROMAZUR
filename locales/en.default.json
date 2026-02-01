@@ -1,0 +1,24 @@
+{
+  "accessibility": {
+    "skip_to_content": "Skip to content"
+  },
+  "general": {
+    "pagination": {
+      "page": "Page {{ number }}"
+    }
+  },
+  "sections": {
+    "header": {
+      "menu": "Menu",
+      "promo": "Promotions",
+      "search": "Search",
+      "search_placeholder": "Search products",
+      "account": "Account",
+      "sign_in": "Sign in",
+      "cart": "Cart",
+      "open_menu": "Open menu",
+      "close_menu": "Close menu",
+      "dropdown_help": "Assign a menu to this dropdown in the section settings."
+    }
+  }
+}
