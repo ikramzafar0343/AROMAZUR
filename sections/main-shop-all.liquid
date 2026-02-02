@@ -10,9 +10,51 @@
       assign all_collection = collections['frontpage']
     endif
   endif
-  
+
   assign all_products = all_collection.products
-  
+
+  comment
+    Parse ?view= from URL for hardcoded nav (new, sale, diffusers, fragrance-oils, voyage). No Admin collections needed.
+  endcomment
+  assign qs = request.query_string | downcase
+  assign shop_view = ''
+  if qs contains 'view=new'
+    assign shop_view = 'new'
+  elsif qs contains 'view=sale'
+    assign shop_view = 'sale'
+  elsif qs contains 'view=diffusers'
+    assign shop_view = 'diffusers'
+  elsif qs contains 'view=fragrance-oils'
+    assign shop_view = 'fragrance-oils'
+  elsif qs contains 'view=voyage'
+    assign shop_view = 'voyage'
+  endif
+
+  assign hero_eyebrow = section.settings.eyebrow
+  assign hero_title = section.settings.title
+  assign hero_description = section.settings.description
+  if shop_view == 'new'
+    assign hero_eyebrow = '#NEW'
+    assign hero_title = 'New Arrivals'
+    assign hero_description = "Our newest fragrances and diffusers. Be the first to discover what's new at AROMAZUR."
+  elsif shop_view == 'sale'
+    assign hero_eyebrow = 'SALE'
+    assign hero_title = 'Sale'
+    assign hero_description = 'Special offers on select diffusers and fragrance oils. Limited-time savings.'
+  elsif shop_view == 'diffusers'
+    assign hero_eyebrow = 'DIFFUSERS'
+    assign hero_title = 'Diffusers'
+    assign hero_description = 'Elegant diffusers for every space. From compact to professional coverage.'
+  elsif shop_view == 'fragrance-oils'
+    assign hero_eyebrow = 'DIFFUSER OILS'
+    assign hero_title = 'Fragrance Oils'
+    assign hero_description = 'Premium fragrance oils for your diffuser. Hotel and Designer collections.'
+  elsif shop_view == 'voyage'
+    assign hero_eyebrow = 'SCENT VOYAGE'
+    assign hero_title = 'Scent Voyage'
+    assign hero_description = 'Destination-inspired fragrances. Explore the world through scent.'
+  endif
+
   assign categories_list = ''
   for product in all_products limit: 100
     assign product_type = product.type | downcase
@@ -25,7 +67,7 @@
     endif
   endfor
   assign categories_array = categories_list | split: '|'
-  
+
   assign min_price = 0
   assign max_price = 1000
   for product in all_products limit: 50
@@ -40,14 +82,14 @@
 %}
 
 {% if collection.handle == 'all' or collection.handle == blank %}
-<section class="az-shop az-page-transition" data-shop-page>
+<section class="az-shop az-page-transition" data-shop-page data-shop-view="{{ shop_view }}">
   <!-- Hero Header -->
   <div class="az-shop__hero">
     <div class="page-width az-shop__hero-inner">
       <div class="az-shop__hero-content">
-        {% if section.settings.eyebrow != blank %}<div class="az-shop__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">{{ section.settings.eyebrow }}</div>{% endif %}
-        {% if section.settings.title != blank %}<h1 class="az-shop__title az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1">{{ section.settings.title }}</h1>{% endif %}
-        {% if section.settings.description != blank %}<p class="az-shop__desc">{{ section.settings.description }}</p>{% endif %}
+        {% if hero_eyebrow != blank %}<div class="az-shop__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">{{ hero_eyebrow }}</div>{% endif %}
+        {% if hero_title != blank %}<h1 class="az-shop__title az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1">{{ hero_title }}</h1>{% endif %}
+        {% if hero_description != blank %}<p class="az-shop__desc">{{ hero_description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -156,8 +198,26 @@
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
+              assign is_new = false
+              if product.tags contains 'new-arrivals' or product.tags contains 'new'
+                assign is_new = true
+              endif
+              assign is_sale_tag = false
+              if product.tags contains 'sale'
+                assign is_sale_tag = true
+              endif
+              assign is_diffuser = false
+              if type_lc == 'diffusers'
+                assign is_diffuser = true
+              endif
+              assign is_oil = false
+              if type_lc == 'fragrance oils'
+                assign is_oil = true
+              endif
             %}
-            {% assign card_data_attrs = 'data-shop-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' %}
+            {% if on_sale or is_sale_tag %}{% assign show_in_sale = true %}{% else %}{% assign show_in_sale = false %}{% endif %}
+            {% assign view_attrs = ' data-view-new="' | append: is_new | append: '" data-view-sale="' | append: show_in_sale | append: '" data-view-diffusers="' | append: is_diffuser | append: '" data-view-fragrance-oils="' | append: is_oil | append: '" data-view-voyage="true"' %}
+            {% assign card_data_attrs = 'data-shop-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' | append: view_attrs %}
             {% render 'product-card',
               product: product,
               show_quick_add: true,

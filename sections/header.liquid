@@ -3,14 +3,14 @@
   assign promo_messages_lines = promo_messages | split: '|'
 
   comment
-    Fixed Shopify URLs (routing only — no broken links)
+    Hardcoded nav: all category links go to Shop All with ?view= so no Admin collections/pages needed.
   endcomment
   assign shop_all_url = routes.all_products_collection_url
-  assign new_url = '/collections/new-arrivals'
-  assign sale_url = '/collections/sale'
-  assign diffusers_url = '/collections/diffusers'
-  assign oils_url = '/collections/fragrance-oils'
-  assign voyage_url = '/pages/scent-voyage'
+  assign new_url = shop_all_url | append: '?view=new'
+  assign sale_url = shop_all_url | append: '?view=sale'
+  assign diffusers_url = shop_all_url | append: '?view=diffusers'
+  assign oils_url = shop_all_url | append: '?view=fragrance-oils'
+  assign voyage_url = shop_all_url | append: '?view=voyage'
 
   assign room_sprays_collection = collections['fragrance-room-sprays']
   if room_sprays_collection == blank
@@ -73,26 +73,25 @@
   if request_path == '/collections/all' or request_path == '/collections/all/'
     assign is_shop_all = true
   endif
+  assign qs = request.query_string | downcase
   assign is_new = false
-  if request_path contains 'new-arrivals'
+  if qs contains 'view=new'
     assign is_new = true
   endif
   assign is_sale = false
-  if request_path contains '/collections/sale'
+  if qs contains 'view=sale'
     assign is_sale = true
   endif
   assign is_diffusers = false
-  if request_path contains '/collections/diffusers'
-    unless request_path contains 'fragrance-oils'
-      assign is_diffusers = true
-    endunless
+  if qs contains 'view=diffusers'
+    assign is_diffusers = true
   endif
   assign is_oils = false
-  if request_path contains '/collections/fragrance-oils'
+  if qs contains 'view=fragrance-oils'
     assign is_oils = true
   endif
   assign is_voyage = false
-  if request_path contains 'scent-voyage'
+  if qs contains 'view=voyage'
     assign is_voyage = true
   endif
   assign is_room_sprays = false

@@ -659,8 +659,14 @@
 
     if (!grid || !products.length) return;
 
+    const viewFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      return params.get('view') || shopPage.getAttribute('data-shop-view') || '';
+    };
+
     let currentCategory = 'all';
     let currentSort = 'featured';
+    let currentView = viewFromUrl();
     let priceMin = 0;
     let priceMax = Infinity;
 
@@ -672,8 +678,15 @@
       return product.getAttribute('data-category') || '';
     };
 
+    const productMatchesView = (product) => {
+      if (!currentView) return true;
+      const attr = product.getAttribute('data-view-' + currentView);
+      return attr === 'true';
+    };
+
     const filterProducts = () => {
       let visible = products.filter((product) => {
+        if (!productMatchesView(product)) return false;
         const price = getProductPrice(product);
         const category = getProductCategory(product);
         
