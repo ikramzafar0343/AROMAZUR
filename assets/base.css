@@ -6796,23 +6796,24 @@ textarea:focus-visible {
 }
 
 .cart-summary button[name="update"] {
-  background: transparent;
-  border: 2px solid var(--color-border);
+  background: linear-gradient(to right, #f3f4f6, #f9fafb);
+  border: 1px solid transparent;
   color: var(--color-text);
 }
 
 .cart-summary button[name="update"]:hover {
-  border-color: var(--color-text);
-  transform: translateY(-1px);
+  background: linear-gradient(to right, #e5e7eb, #f3f4f6);
+  transform: translateY(-2px);
 }
 
 .cart-summary button[name="checkout"] {
-  background: var(--color-text);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   color: #fff;
+  border: 1px solid transparent;
 }
 
 .cart-summary button[name="checkout"]:hover {
-  opacity: 0.95;
+  background: linear-gradient(to right, #0052a3, #1a9a94);
   transform: translateY(-2px);
 }
 
