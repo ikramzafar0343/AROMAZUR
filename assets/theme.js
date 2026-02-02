@@ -234,6 +234,28 @@
       const totalEl = root.querySelector('[data-cart-total]');
       if (totalEl) totalEl.textContent = formatMoney(cart.total_price);
 
+      let cartSavings = 0;
+      let cartOriginalTotal = 0;
+      (cart.items || []).forEach((item) => {
+        cartOriginalTotal += item.original_line_price || 0;
+        if (item.original_line_price > item.final_line_price) {
+          cartSavings += (item.original_line_price || 0) - (item.final_line_price || 0);
+        }
+      });
+      const savingsEl = root.querySelector('[data-cart-savings]');
+      if (savingsEl) savingsEl.textContent = '-' + formatMoney(cartSavings);
+      const savingsRowEl = root.querySelector('[data-cart-savings-row]');
+      if (savingsRowEl) {
+        if (cartSavings > 0) savingsRowEl.removeAttribute('hidden');
+        else savingsRowEl.setAttribute('hidden', '');
+      }
+      const originalTotalEl = root.querySelector('[data-cart-original-total]');
+      if (originalTotalEl) {
+        originalTotalEl.textContent = formatMoney(cartOriginalTotal);
+        if (cartSavings > 0) originalTotalEl.removeAttribute('hidden');
+        else originalTotalEl.setAttribute('hidden', '');
+      }
+
       const titleEl = root.querySelector('.az-cart__title');
       if (titleEl) {
         const base = titleEl.getAttribute('data-cart-title-base') || 'Panier';
@@ -246,6 +268,29 @@
       const freeShipEl = root.querySelector('[data-cart-free-shipping]');
       const threshold = freeShippingThreshold();
       const itemCount = cart.item_count || 0;
+      const giftEl = root.querySelector('[data-cart-gift]');
+      const giftTextEl = root.querySelector('[data-cart-gift-text]');
+      const giftFillEl = root.querySelector('[data-cart-gift-fill]');
+      const giftThreshold = () => {
+        const v = document.body && document.body.getAttribute('data-cart-gift-threshold');
+        return Math.max(0, Number(v) || 0);
+      };
+      const giftThresh = giftThreshold();
+      if (giftEl && giftTextEl && giftFillEl && giftThresh > 0 && itemCount > 0) {
+        const subtotal = Number(cart.total_price) || 0;
+        if (subtotal >= giftThresh) {
+          giftTextEl.innerHTML = 'You\'ve unlocked your <strong>FREE</strong> Gift!';
+          giftFillEl.style.width = '100%';
+          giftEl.removeAttribute('hidden');
+        } else {
+          const remaining = giftThresh - subtotal;
+          giftTextEl.innerHTML = 'Add ' + formatMoney(remaining) + ' to unlock your <strong>FREE</strong> Gift!';
+          giftFillEl.style.width = Math.min(100, (subtotal / giftThresh) * 100) + '%';
+          giftEl.removeAttribute('hidden');
+        }
+      } else if (giftEl) {
+        giftEl.setAttribute('hidden', '');
+      }
       if (freeShipEl) {
         if (itemCount === 0 || threshold <= 0) {
           freeShipEl.textContent = '';
@@ -261,6 +306,11 @@
             freeShipEl.removeAttribute('hidden');
           }
         }
+      }
+      const upsellEl = root.querySelector('[data-cart-upsell]');
+      if (upsellEl) {
+        if (itemCount > 0) upsellEl.removeAttribute('hidden');
+        else upsellEl.setAttribute('hidden', '');
       }
       if (!itemsEl) return;
 
@@ -298,15 +348,20 @@
           div.className = 'az-cart__item';
           div.setAttribute('data-cart-item', '');
           div.setAttribute('data-item-key', key);
+          const hasCompare = item.original_line_price != null && item.original_line_price > item.final_line_price;
+          const variantHtml = item.variant_title && item.variant_title !== 'Default Title'
+            ? `<div class="az-cart__item-variant"><span class="az-cart__item-variant-label">Color:</span> ${item.variant_title}</div>`
+            : '';
           div.innerHTML = `
             <a href="${item.url}" class="az-cart__item-image" aria-label="${item.product_title}">
               ${item.image ? `<img src="${item.image}" alt="" loading="lazy" decoding="async">` : `<div class="az-cart__placeholder"></div>`}
             </a>
             <div class="az-cart__item-details">
               <a href="${item.url}" class="az-cart__item-title">${item.product_title}</a>
-              ${item.variant_title && item.variant_title !== 'Default Title' ? `<div class="az-cart__item-variant">${item.variant_title}</div>` : ''}
+              ${variantHtml}
               <div class="az-cart__item-price">
                 <span class="az-cart__item-price-current" data-cart-line-price>${formatMoney(item.final_line_price)}</span>
+                ${hasCompare ? `<span class="az-cart__item-price-compare">${formatMoney(item.original_line_price)}</span>` : ''}
               </div>
               <div class="az-cart__item-actions">
                 <div class="az-cart__quantity">
