@@ -38,9 +38,9 @@
   <div class="az-new__hero">
     <div class="page-width az-new__hero-inner">
       <div class="az-new__hero-content">
-        <div class="az-new__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">NEW ARRIVALS</div>
-        <h1 class="az-new__title az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1">Discover Our Latest Collection</h1>
-        <p class="az-new__desc az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-2">Be the first to experience our newest fragrances, diffusers, and home scents. Fresh arrivals added weekly.</p>
+        {% if section.settings.eyebrow != blank %}<div class="az-new__eyebrow az-fade-in az-fade-in--up az-fade-in--slow">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.title != blank %}<h1 class="az-new__title az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-1">{{ section.settings.title }}</h1>{% endif %}
+        {% if section.settings.description != blank %}<p class="az-new__desc az-fade-in az-fade-in--up az-fade-in--slow az-fade-in--delay-2">{{ section.settings.description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -130,7 +130,6 @@
         <div class="az-new__grid" data-new-grid>
           {% for product in new_products %}
             {% liquid
-              assign category_token = ''
               assign type_lc = product.type | downcase
               case type_lc
                 when 'diffusers'
@@ -143,17 +142,13 @@
                   assign category_token = 'candles'
                 when 'perfumes'
                   assign category_token = 'perfumes'
+                else
+                  assign category_token = type_lc | handle
               endcase
-              
-              if category_token == blank
-                assign category_token = type_lc | handle
-              endif
-              
               assign on_sale = false
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
-              
               assign is_new = false
               for tag in product.tags
                 assign tag_lc = tag | downcase
@@ -163,56 +158,14 @@
                 endif
               endfor
             %}
-            
-            {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-            <div class="az-new__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
-                 data-new-product 
-                 data-category="{{ category_token }}"
-                 data-price="{{ product.price }}"
-                 data-on-sale="{% if on_sale %}true{% else %}false{% endif %}"
-                 data-is-new="{% if is_new %}true{% else %}false{% endif %}">
-              <a class="az-prod__link" href="{{ product.url }}">
-                <div class="az-prod__media">
-                  {% if product.featured_image %}
-                    {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                  {% else %}
-                    <div class="az-prod__placeholder"></div>
-                  {% endif %}
-                  {% if is_new %}
-                    <span class="az-prod__badge">NEW</span>
-                  {% elsif on_sale %}
-                    <span class="az-prod__badge">SALE</span>
-                  {% endif %}
-                </div>
-                <div class="az-prod__body">
-                  <h3 class="az-prod__title">{{ product.title }}</h3>
-                  <div class="az-prod__price">
-                    <span class="az-prod__price-current">{{ product.price | money }}</span>
-                    {% if on_sale %}
-                      <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </a>
-
-              <div class="az-prod__actions">
-                {% form 'product', product, class: 'az-prod__form' %}
-                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                  <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                    {% if product.selected_or_first_available_variant.available %}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
-                        <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
-                        <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Add to cart
-                    {% else %}
-                      Sold out
-                    {% endif %}
-                  </button>
-                {% endform %}
-              </div>
-            </div>
+            {% assign card_data_attrs = 'data-new-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '" data-is-new="' | append: is_new | append: '"' %}
+            {% render 'product-card',
+              product: product,
+              show_quick_add: true,
+              show_wishlist: true,
+              delay_index: forloop.index0 | modulo: 5 | plus: 1,
+              data_attrs: card_data_attrs,
+              wrapper_class: 'az-new__product-wrapper' %}
           {% endfor %}
         </div>
 
@@ -229,18 +182,14 @@
   </div>
 
   <!-- Featured Section -->
+  {% if section.settings.featured_subtitle != blank or section.settings.featured_title != blank or section.settings.featured_description != blank or section.settings.featured_cta != blank or section.settings.featured_url != blank %}
   <div class="az-new__featured">
     <div class="page-width az-new__featured-inner">
       <div class="az-new__featured-content">
-        <div class="az-new__featured-eyebrow">Limited Edition</div>
-        <h2 class="az-new__featured-title">Spring Collection 2024</h2>
-        <p class="az-new__featured-desc">
-          Experience the essence of spring with our latest limited edition fragrances. 
-          Inspired by blooming gardens and fresh morning air, these scents capture the renewal of the season.
-        </p>
-        <a href="{{ section.settings.featured_url | default: new_collection.url }}" class="az-new__featured-btn">
-          Shop New Arrivals
-        </a>
+        {% if section.settings.featured_subtitle != blank %}<div class="az-new__featured-eyebrow">{{ section.settings.featured_subtitle }}</div>{% endif %}
+        {% if section.settings.featured_title != blank %}<h2 class="az-new__featured-title">{{ section.settings.featured_title }}</h2>{% endif %}
+        {% if section.settings.featured_description != blank %}<p class="az-new__featured-desc">{{ section.settings.featured_description }}</p>{% endif %}
+        {% if section.settings.featured_cta != blank or section.settings.featured_url != blank %}<a href="{{ section.settings.featured_url | default: new_collection.url }}" class="az-new__featured-btn">{{ section.settings.featured_cta | default: 'Shop' }}</a>{% endif %}
       </div>
       <div class="az-new__featured-visual">
         <div class="az-new__featured-glow"></div>
@@ -250,6 +199,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -273,13 +223,13 @@
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "Discover Our Latest Collection"
+      "default": "New Arrivals"
     },
     {
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Be the first to experience our newest fragrances, diffusers, and home scents. Fresh arrivals added weekly."
+      "default": ""
     },
     {
       "type": "header",
@@ -289,25 +239,25 @@
       "type": "text",
       "id": "featured_subtitle",
       "label": "Featured subtitle",
-      "default": "Limited Edition"
+      "default": ""
     },
     {
       "type": "text",
       "id": "featured_title",
       "label": "Featured title",
-      "default": "Spring Collection 2024"
+      "default": ""
     },
     {
       "type": "textarea",
       "id": "featured_description",
       "label": "Featured description",
-      "default": "Experience the essence of spring with our latest limited edition fragrances."
+      "default": ""
     },
     {
       "type": "text",
       "id": "featured_cta",
       "label": "Featured CTA text",
-      "default": "Shop New Arrivals"
+      "default": ""
     },
     {
       "type": "url",

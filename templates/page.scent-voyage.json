@@ -1,0 +1,9 @@
+{
+  "sections": {
+    "quiz": {
+      "type": "main-scent-voyage-quiz",
+      "settings": {}
+    }
+  },
+  "order": ["quiz"]
+}

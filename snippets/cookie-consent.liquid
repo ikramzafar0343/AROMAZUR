@@ -1,0 +1,31 @@
+{%- comment -%}
+  GDPR cookie consent banner. Scripts (GA4, GTM, Meta) load only after consent via theme.js (non-blocking).
+{%- endcomment -%}
+{%- if settings.cookie_consent_enabled -%}
+<div id="az-cookie-consent"
+     class="az-cookie"
+     data-cookie-consent
+     data-ga4-id="{{ settings.ga4_measurement_id | escape }}"
+     data-gtm-id="{{ settings.gtm_container_id | escape }}"
+     data-meta-pixel-id="{{ settings.meta_pixel_id | escape }}"
+     data-privacy-url="{{ shop.url }}/policies/privacy-policy"
+     hidden
+     role="dialog"
+     aria-labelledby="cookie-consent-title"
+     aria-describedby="cookie-consent-desc">
+  <div class="az-cookie__inner">
+    <p class="az-cookie__text" id="cookie-consent-desc">
+      {{ settings.cookie_consent_message | default: 'We use cookies to improve your experience and for analytics. By continuing you accept our use of cookies.' }}
+      <a href="{{ shop.url }}/policies/privacy-policy" class="az-cookie__link">{{ settings.cookie_settings | default: 'Privacy' }}</a>
+    </p>
+    <div class="az-cookie__actions">
+      <button type="button" class="az-cookie__btn az-cookie__btn--reject" data-cookie-reject>
+        {{ settings.cookie_reject | default: 'Reject non-essential' }}
+      </button>
+      <button type="button" class="az-cookie__btn az-cookie__btn--accept" data-cookie-accept>
+        {{ settings.cookie_accept_all | default: 'Accept all' }}
+      </button>
+    </div>
+  </div>
+</div>
+{%- endif -%}

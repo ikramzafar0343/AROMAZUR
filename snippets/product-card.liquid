@@ -1,0 +1,212 @@
+{% comment %}
+  Product card – all dynamic data from product metafields.
+  Usage: {% render 'product-card', product: product, card_context: 'oils', show_quick_add: true, show_wishlist: true, delay_index: 1, data_attrs: 'data-oils-product', wrapper_class: 'az-oils__product-wrapper' %}
+{% endcomment %}
+{% liquid
+  assign product = product
+  assign card_context = card_context | default: ''
+  assign show_quick_add = show_quick_add | default: true
+  assign show_wishlist = show_wishlist | default: true
+  assign delay_index = delay_index | default: 1
+  assign data_attrs = data_attrs | default: ''
+  assign wrapper_class = wrapper_class | default: ''
+
+  assign on_sale = false
+  assign sale_percent = 0
+  if product.compare_at_price > product.price and product.compare_at_price > 0
+    assign on_sale = true
+    assign sale_amount = product.compare_at_price | minus: product.price
+    assign sale_percent = sale_amount | times: 100.0 | divided_by: product.compare_at_price | round
+  endif
+
+  assign badges_raw = product.metafields.custom.badges.value
+  if badges_raw != blank
+    assign badge_list = badges_raw | join: ',' | split: ','
+  else
+    assign badge_list = ''
+  endif
+
+  assign rating_value = product.metafields.reviews.rating.value | default: product.metafields.custom.rating.value
+  assign review_count_value = product.metafields.reviews.count.value | default: product.metafields.custom.review_count.value
+
+  assign intensity_value = product.metafields.custom.intensity.value | default: product.metafields.custom.intensity | default: product.metafields.custom.intensity_dots.value | default: ''
+  assign intensity_dots = 0
+  if intensity_value != blank
+    assign intensity_lc = intensity_value | downcase
+    if intensity_lc == 'light' or intensity_lc == 'légère' or intensity_lc == 'legere'
+      assign intensity_dots = 1
+    elsif intensity_lc == 'medium' or intensity_lc == 'modérée' or intensity_lc == 'moderee'
+      assign intensity_dots = 2
+    elsif intensity_lc == 'strong' or intensity_lc == 'prononcée' or intensity_lc == 'prononcee'
+      assign intensity_dots = 3
+    elsif intensity_lc == 'very strong' or intensity_lc == 'intense'
+      assign intensity_dots = 4
+    elsif intensity_value == '1' or intensity_value == 1
+      assign intensity_dots = 1
+    elsif intensity_value == '2' or intensity_value == 2
+      assign intensity_dots = 2
+    elsif intensity_value == '3' or intensity_value == 3
+      assign intensity_dots = 3
+    elsif intensity_value == '4' or intensity_value == 4
+      assign intensity_dots = 4
+    endif
+  endif
+
+  assign fragrance_family = product.metafields.custom.family.value | default: product.metafields.custom.family | default: product.metafields.custom.fragrance_family.value | default: product.metafields.custom.fragrance_family | default: ''
+  assign coverage_days = product.metafields.custom.coverage.value | default: product.metafields.custom.coverage | default: product.metafields.custom.coverage_days.value | default: product.metafields.custom.coverage_days | default: ''
+  assign inspired_by = product.metafields.custom.inspired_by.value | default: product.metafields.custom.inspired_by | default: ''
+  assign burn_time = product.metafields.custom.burn_time.value | default: product.metafields.custom.burn_time | default: ''
+%}
+
+<div class="az-prod-card__wrapper {{ wrapper_class }}" {% if data_attrs != blank %}{{ data_attrs }}{% endif %}>
+  <div class="az-prod az-prod-card az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}"
+       data-product-id="{{ product.id }}"
+       data-variant-id="{{ product.selected_or_first_available_variant.id }}"
+       data-product-title="{{ product.title | escape }}"
+       data-product-handle="{{ product.handle }}"
+       data-product-image="{% if product.featured_image %}{{ product.featured_image | image_url: width: 400 }}{% endif %}"
+       data-product-url="{{ product.url }}"
+       data-price="{{ product.price }}"
+       data-on-sale="{% if on_sale %}true{% else %}false{% endif %}"
+       data-product-type="{{ product.type | default: '' | handle }}"
+       data-intensity="{{ intensity_value | default: '' | handle }}"
+       data-fragrance-family="{{ fragrance_family | default: '' | handle }}"
+       data-inspired-by="{{ inspired_by | default: '' | handle }}"
+       data-collection-handles="{% for c in product.collections %}{{ c.handle }}{% unless forloop.last %},{% endunless %}{% endfor %}">
+    <a class="az-prod__link" href="{{ product.url }}">
+      <div class="az-prod__media">
+        {% if product.featured_image %}
+          {%- assign img = product.featured_image -%}
+          <img src="{{ img | image_url: width: 700 }}" alt="{{ product.title | escape }}" loading="lazy" decoding="async" width="700" height="{{ 700 | divided_by: img.aspect_ratio | round }}" class="az-prod__img">
+        {% else %}
+          <div class="az-prod__placeholder"></div>
+        {% endif %}
+
+        <div class="az-prod-card__badges" aria-hidden="true">
+          {% if on_sale and sale_percent > 0 %}
+            <span class="az-prod-card__badge az-prod-card__badge--sale">-{{ sale_percent }}%</span>
+          {% endif %}
+          {% if badge_list != blank %}
+            {% for badge_key in badge_list %}
+              {% assign key = badge_key | downcase | strip %}
+              {% if key == 'best-seller' %}
+                <span class="az-prod-card__badge az-prod-card__badge--best-seller">Best-seller</span>
+              {% elsif key == 'nouveau' %}
+                <span class="az-prod-card__badge az-prod-card__badge--nouveau">Nouveau</span>
+              {% elsif key == 'stock-limite' %}
+                <span class="az-prod-card__badge az-prod-card__badge--stock">Stock limité</span>
+              {% elsif key == 'livraison-offerte' %}
+                <span class="az-prod-card__badge az-prod-card__badge--shipping">Livraison offerte</span>
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        </div>
+
+        {% if show_quick_add or show_wishlist %}
+          <div class="az-prod-card__hover-actions" aria-hidden="true">
+            {% if show_quick_add %}
+              <div class="az-prod-card__quick-add" data-quick-add>
+                {% form 'product', product, class: 'az-prod-card__quick-add-form' %}
+                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+                  <button type="submit" class="az-prod-card__hover-btn az-prod-card__hover-btn--cart" aria-label="Add to cart" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
+                      <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+                      <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    <span class="az-prod-card__hover-btn-label">Quick Add</span>
+                  </button>
+                {% endform %}
+              </div>
+            {% endif %}
+            {% if show_wishlist %}
+              <button type="button" class="az-prod-card__hover-btn az-prod-card__hover-btn--wishlist" aria-label="Add to wishlist" data-wishlist-toggle data-product-id="{{ product.id }}">
+                <svg class="az-wishlist-icon az-wishlist-icon--outline" width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <svg class="az-wishlist-icon az-wishlist-icon--filled" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                  <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+                </svg>
+              </button>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+
+      <div class="az-prod__body">
+        {% if inspired_by != blank %}
+          <p class="az-prod-card__inspired">Inspiré de {{ inspired_by }}®</p>
+        {% endif %}
+
+        <h3 class="az-prod__title">{{ product.title }}</h3>
+
+        {% if rating_value != blank or review_count_value != blank %}
+          <div class="az-prod-card__rating" aria-label="Rating: {{ rating_value | default: 0 }} out of 5">
+            {% assign rating_num = rating_value | times: 1.0 | round %}
+            {% if rating_num > 0 %}
+              <span class="az-prod-card__stars" aria-hidden="true">
+                {% for i in (1..5) %}
+                  {% if i <= rating_num %}
+                    <span class="az-prod-card__star az-prod-card__star--filled">★</span>
+                  {% else %}
+                    <span class="az-prod-card__star">★</span>
+                  {% endif %}
+                {% endfor %}
+              </span>
+            {% endif %}
+            {% if review_count_value != blank %}
+              <span class="az-prod-card__review-count">({{ review_count_value }})</span>
+            {% endif %}
+            {% if review_count_value != blank and review_count_value != '0' %}
+              <span class="az-prod-card__verified" aria-label="Verified buyer">✓ Verified</span>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <div class="az-prod__price">
+          <span class="az-prod__price-current">{{ product.price | money }}</span>
+          {% if on_sale %}
+            <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
+          {% endif %}
+        </div>
+
+        {% if intensity_dots > 0 or fragrance_family != blank or coverage_days != blank or burn_time != blank %}
+          <div class="az-prod-card__meta">
+            {% if intensity_dots > 0 %}
+              <span class="az-prod-card__intensity" aria-label="Intensity: {{ intensity_value }}">
+                {% for i in (1..4) %}
+                  <span class="az-prod-card__intensity-dot {% if i <= intensity_dots %}az-prod-card__intensity-dot--active{% endif %}"></span>
+                {% endfor %}
+              </span>
+            {% endif %}
+            {% if fragrance_family != blank or coverage_days != blank or burn_time != blank %}
+              <span class="az-prod-card__meta-text">
+                {% if fragrance_family != blank %}{{ fragrance_family }}{% endif %}
+                {% if coverage_days != blank %}{% if fragrance_family != blank %} · {% endif %}{{ coverage_days }}{% endif %}
+                {% if burn_time != blank %}{% if fragrance_family != blank or coverage_days != blank %} · {% endif %}{{ burn_time }}{% endif %}
+              </span>
+            {% endif %}
+          </div>
+        {% endif %}
+      </div>
+    </a>
+
+    <div class="az-prod__actions">
+      {% form 'product', product, class: 'az-prod__form' %}
+        <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+        <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
+          {% if product.selected_or_first_available_variant.available %}
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;" aria-hidden="true">
+              <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
+              <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
+              <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            Add to cart
+          {% else %}
+            Sold out
+          {% endif %}
+        </button>
+      {% endform %}
+    </div>
+  </div>
+</div>

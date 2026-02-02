@@ -1,0 +1,104 @@
+{
+  "namespace": "custom",
+  "product_metafields": [
+    {
+      "key": "badges",
+      "name": "Badges",
+      "type": "list.single_line_text_field",
+      "description": "Product badges: best-seller, nouveau, stock-limite, livraison-offerte. Sale % is computed from compare-at price.",
+      "valid_values": ["best-seller", "nouveau", "stock-limite", "livraison-offerte"]
+    },
+    {
+      "key": "rating",
+      "name": "Rating (fallback)",
+      "type": "number_decimal",
+      "description": "Display rating (1–5) when reviews app is not installed. Used only if product.metafields.reviews.rating is blank."
+    },
+    {
+      "key": "review_count",
+      "name": "Review count (fallback)",
+      "type": "number_integer",
+      "description": "Display review count when reviews app is not installed. Used only if product.metafields.reviews.count is blank."
+    },
+    {
+      "key": "rating_breakdown",
+      "name": "Rating breakdown (optional)",
+      "type": "single_line_text_field",
+      "description": "Optional. PDP rating breakdown: comma-separated star:percent (e.g. 5:80,4:15,3:3,2:1,1:1). If blank, theme estimates from average rating."
+    },
+    {
+      "key": "burn_time",
+      "name": "Burn time",
+      "type": "single_line_text_field",
+      "description": "Candle burn time (e.g. 50–60 Hours)."
+    },
+    {
+      "key": "intensity",
+      "name": "Intensity",
+      "type": "single_line_text_field",
+      "description": "Fragrance intensity level for filtering and display.",
+      "valid_values": ["Light", "Medium", "Strong", "Very Strong"],
+      "admin_instructions": "In Shopify Admin: Settings → Custom data → Products → Add definition. Type: Single line text (or use a metafield definition with predefined list if available)."
+    },
+    {
+      "key": "fragrance_family",
+      "name": "Fragrance family",
+      "type": "single_line_text_field",
+      "description": "Olfactory family (e.g. Woody, Fresh, Floral, Oriental)."
+    },
+    {
+      "key": "coverage_days",
+      "name": "Coverage / Days",
+      "type": "single_line_text_field",
+      "description": "For diffusers: coverage in sq ft. For oils: approximate days of use or room size."
+    },
+    {
+      "key": "inspired_by",
+      "name": "Inspired by",
+      "type": "single_line_text_field",
+      "description": "Designer or fragrance inspiration (e.g. Bleu de Chanel style)."
+    },
+    {
+      "key": "notes_top",
+      "name": "Notes (top)",
+      "type": "single_line_text_field",
+      "description": "Top notes of the fragrance."
+    },
+    {
+      "key": "notes_heart",
+      "name": "Notes (heart)",
+      "type": "single_line_text_field",
+      "description": "Heart / middle notes."
+    },
+    {
+      "key": "notes_base",
+      "name": "Notes (base)",
+      "type": "single_line_text_field",
+      "description": "Base notes."
+    },
+    {
+      "key": "ingredients",
+      "name": "Ingredients",
+      "type": "multi_line_text_field",
+      "description": "Ingredients list for product page accordion."
+    },
+    {
+      "key": "faq_questions",
+      "name": "FAQ questions",
+      "type": "list.single_line_text_field",
+      "description": "FAQ questions (paired with faq_answers by index)."
+    },
+    {
+      "key": "faq_answers",
+      "name": "FAQ answers",
+      "type": "list.multi_line_text_field",
+      "description": "FAQ answers (paired with faq_questions by index)."
+    }
+  ],
+  "shopify_admin_steps": [
+    "1. Go to Settings → Custom data → Products",
+    "2. Add definitions for each key above under namespace 'custom' (or create namespace 'custom' first)",
+    "3. For intensity: use Single line text, or create a Metaobject with list and reference it",
+    "4. After products exist, fill metafields per product (Bulk editor or product edit page)"
+  ]
+}

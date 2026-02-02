@@ -324,6 +324,20 @@ Animation settings can be adjusted in `assets/base.css`:
 - Check that `initCartModal()` is called in `theme.js`
 - Ensure cart modal HTML structure is present in header
 
+## 📦 Data & import
+
+The **`data/`** folder contains everything to populate the store via Shopify Admin:
+
+| File | Purpose |
+|------|--------|
+| `collections.json` | Collection handles, titles, descriptions |
+| `shopify_products_import.csv` | **Single product import file**: 21 products (Handle, Title, Body HTML, Vendor, Type, Tags, Variant, Inventory, SEO). Use this CSV only for Shopify product import. |
+| `product_metafields_populated.json` | Metafield values per product (French, normalized: `family`, `intensity`, `coverage`, `top_notes`, `heart_notes`, `base_notes`, `emoji`, `badges`) |
+| `metafields_definitions.json` | Metafield schema for Settings → Custom data → Products |
+| `products.json` | Full product catalog (title, price, tags, collections) |
+
+**Steps:** Create collections (e.g. `hotel`, `designer`, `diffusers`, `coffrets`, `sale`, `new`, `fragrance-oils`), import products from the CSV, assign to collections, then apply metafields from `product_metafields_populated.json` (Bulk editor or per product). Theme reads both legacy keys (`fragrance_family`, `coverage_days`, `notes_top`/`notes_heart`/`notes_base`) and new keys (`family`, `coverage`, `top_notes`/`heart_notes`/`base_notes`) for compatibility.
+
 ## 📚 Resources
 
 - [Shopify Liquid Documentation](https://shopify.dev/docs/api/liquid)

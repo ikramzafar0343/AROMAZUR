@@ -1,59 +1,268 @@
-<section class="main-collection az-page-transition">
-  <div class="page-width">
-    <h1 class="az-fade-in az-fade-in--up">{{ collection.title }}</h1>
+{% liquid
+  assign products_array = collection.products
+  assign product_types_list = ''
+  assign intensity_list = ''
+  assign family_list = ''
+  assign inspired_list = ''
+  assign min_price_cents = 999999999
+  assign max_price_cents = 0
 
-    {% if collection.description != blank %}
-      <div class="rte az-fade-in az-fade-in--up az-fade-in--delay-1">
-        {{ collection.description }}
-      </div>
-    {% endif %}
+  for product in products_array
+    assign price_c = product.price
+    if price_c < min_price_cents
+      assign min_price_cents = price_c
+    endif
+    if price_c > max_price_cents
+      assign max_price_cents = price_c
+    endif
+    assign pt = product.type | default: '' | strip
+    if pt != blank
+      assign pt_handle = pt | handle
+      unless product_types_list contains pt_handle
+        if product_types_list == blank
+          assign product_types_list = pt_handle
+        else
+          assign product_types_list = product_types_list | append: '|||' | append: pt_handle
+        endunless
+      endunless
+    endif
+    assign intensity_val = product.metafields.custom.intensity.value | default: product.metafields.custom.intensity | default: ''
+    if intensity_val != blank
+      assign intensity_handle = intensity_val | handle
+      unless intensity_list contains intensity_handle
+        if intensity_list == blank
+          assign intensity_list = intensity_handle
+        else
+          assign intensity_list = intensity_list | append: '|||' | append: intensity_handle
+        endunless
+      endunless
+    endif
+    assign family_val = product.metafields.custom.family.value | default: product.metafields.custom.family | default: product.metafields.custom.fragrance_family.value | default: product.metafields.custom.fragrance_family | default: ''
+    if family_val != blank
+      assign family_handle = family_val | handle
+      unless family_list contains family_handle
+        if family_list == blank
+          assign family_list = family_handle
+        else
+          assign family_list = family_list | append: '|||' | append: family_handle
+        endunless
+      endunless
+    endif
+    assign inspired_val = product.metafields.custom.inspired_by.value | default: product.metafields.custom.inspired_by | default: ''
+    if inspired_val != blank
+      assign inspired_handle = inspired_val | handle
+      unless inspired_list contains inspired_handle
+        if inspired_list == blank
+          assign inspired_list = inspired_handle
+        else
+          assign inspired_list = inspired_list | append: '|||' | append: inspired_handle
+        endunless
+      endunless
+    endif
+  endfor
 
-    {% if collection.products_count == 0 %}
-      <p class="az-fade-in az-fade-in--up az-fade-in--delay-2" style="text-align: center; padding: var(--spacing-3xl) 0; color: var(--color-text-muted);">
-        No products found in this collection.
-      </p>
-    {% else %}
-      <ul class="product-grid" role="list">
-        {% for product in collection.products %}
-          {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-          <li class="product-grid__item az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}">
-            <a href="{{ product.url }}">
-              {% if product.featured_image %}
-                <div style="position: relative; overflow: hidden;">
-                  {{ product.featured_image | image_url: width: 600 | image_tag: loading: 'lazy', alt: product.title }}
-                  {% if product.compare_at_price > product.price %}
-                    <span style="position: absolute; top: 12px; left: 12px; background: var(--color-error); color: #fff; font-size: 10px; font-weight: 900; padding: 4px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em;">
-                      Sale
-                    </span>
+  if min_price_cents == 999999999
+    assign min_price_cents = 0
+  endif
+  if max_price_cents == 0 and products_array.size == 0
+    assign max_price_cents = 999999999
+  endif
+
+  assign product_types_arr = product_types_list | split: '|||'
+  assign intensity_arr = intensity_list | split: '|||'
+  assign family_arr = family_list | split: '|||'
+  assign inspired_arr = inspired_list | split: '|||'
+
+  comment
+    Build display names: we need handle -> title for display. For intensity we use the raw value; for type/family/inspired we use the first product that had that handle to get the display name, or we titleize the handle.
+  endcomment
+  assign intensity_display = 'Light,Medium,Strong,Very Strong' | split: ','
+%}
+
+<section class="az-collection az-page-transition" data-collection-page data-collection-handle="{{ collection.handle }}">
+  <div class="page-width az-collection__container">
+    <header class="az-collection__header">
+      <h1 class="az-collection__title">{{ collection.title }}</h1>
+      {% if collection.description != blank %}
+        <div class="az-collection__desc rte">{{ collection.description }}</div>
+      {% endif %}
+    </header>
+
+    <div class="az-collection__layout">
+      <aside class="az-collection__sidebar" id="az-collection-filters" data-collection-sidebar aria-label="Filters">
+        <div class="az-collection__sidebar-header">
+          <h2 class="az-collection__sidebar-title">{{ section.settings.filters_heading | default: 'Filtres' }}</h2>
+          <button type="button" class="az-collection__sidebar-close" data-collection-close-drawer aria-label="Fermer les filtres">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+
+        <div class="az-collection__filters">
+          {% comment %} Category (product type) {% endcomment %}
+          {% if product_types_arr.size > 0 %}
+            <div class="az-collection__filter-group" data-filter-group="collection">
+              <h3 class="az-collection__filter-title">{{ section.settings.filter_collection_label | default: 'Catégorie' }}</h3>
+              <div class="az-collection__filter-options">
+                <label class="az-collection__filter-option">
+                  <input type="radio" name="filter-collection" value="" data-collection-filter data-filter-key="collection" checked>
+                  <span>{{ section.settings.filter_all_label | default: 'Toutes' }}</span>
+                </label>
+                {% for pt_handle in product_types_arr %}
+                  {% if pt_handle != blank %}
+                    {% assign pt_display = pt_handle | replace: '-', ' ' | capitalize %}
+                    {% for p in products_array %}
+                      {% if p.type != blank and p.type | handle == pt_handle %}
+                        {% assign pt_display = p.type %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                    <label class="az-collection__filter-option">
+                      <input type="radio" name="filter-collection" value="{{ pt_handle }}" data-collection-filter data-filter-key="collection">
+                      <span>{{ pt_display }}</span>
+                    </label>
                   {% endif %}
-                </div>
-              {% else %}
-                <div style="aspect-ratio: 4/5; background: var(--color-border); display: grid; place-items: center; color: var(--color-text-muted);">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M4 16L10.5 9.5L14.5 13.5L20 8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M20 12V20H4V4H12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                </div>
-              {% endif %}
-              <div style="padding: var(--spacing-md);">
-                <div style="font-size: 15px; font-weight: 800; color: var(--color-text); line-height: 1.3; margin-bottom: var(--spacing-xs);">
-                  {{ product.title }}
-                </div>
-                <div style="font-size: 18px; font-weight: 900; color: var(--color-text);">
-                  {{ product.price | money }}
-                  {% if product.compare_at_price > product.price %}
-                    <span style="font-size: 14px; color: var(--color-text-muted); text-decoration: line-through; margin-left: var(--spacing-xs);">
-                      {{ product.compare_at_price | money }}
-                    </span>
-                  {% endif %}
-                </div>
+                {% endfor %}
               </div>
-            </a>
-          </li>
-        {% endfor %}
-      </ul>
-    {% endif %}
+            </div>
+          {% endif %}
+
+          {% comment %} Price range {% endcomment %}
+          <div class="az-collection__filter-group" data-filter-group="price">
+            <h3 class="az-collection__filter-title">{{ section.settings.filter_price_label | default: 'Prix' }}</h3>
+            <div class="az-collection__price-range">
+              <div class="az-collection__price-inputs">
+                <input type="number" data-collection-price-min placeholder="{{ min_price_cents | money_without_currency }}" min="0" step="1" inputmode="numeric" aria-label="Prix minimum">
+                <span>–</span>
+                <input type="number" data-collection-price-max placeholder="{{ max_price_cents | money_without_currency }}" min="0" step="1" inputmode="numeric" aria-label="Prix maximum">
+              </div>
+              <input type="hidden" data-collection-price-min-value value="{{ min_price_cents }}">
+              <input type="hidden" data-collection-price-max-value value="{{ max_price_cents }}">
+            </div>
+          </div>
+
+          {% comment %} Intensity (metafield) {% endcomment %}
+          {% if intensity_arr.size > 0 %}
+            <div class="az-collection__filter-group" data-filter-group="intensity">
+              <h3 class="az-collection__filter-title">{{ section.settings.filter_intensity_label | default: 'Intensité' }}</h3>
+              <div class="az-collection__filter-options">
+                <label class="az-collection__filter-option">
+                  <input type="radio" name="filter-intensity" value="" data-collection-filter data-filter-key="intensity" checked>
+                  <span>{{ section.settings.filter_all_label | default: 'Toutes' }}</span>
+                </label>
+                {% for ih in intensity_arr %}
+                  {% if ih != blank %}
+                    {% assign idisplay = ih | replace: '-', ' ' %}
+                    {% if idisplay == 'light' %} {% assign idisplay = 'Light' %} {% endif %}
+                    {% if idisplay == 'medium' %} {% assign idisplay = 'Medium' %} {% endif %}
+                    {% if idisplay == 'strong' %} {% assign idisplay = 'Strong' %} {% endif %}
+                    {% if idisplay == 'very strong' %} {% assign idisplay = 'Very Strong' %} {% endif %}
+                    <label class="az-collection__filter-option">
+                      <input type="radio" name="filter-intensity" value="{{ ih }}" data-collection-filter data-filter-key="intensity">
+                      <span>{{ idisplay }}</span>
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% comment %} Fragrance family (metafield) {% endcomment %}
+          {% if family_arr.size > 0 %}
+            <div class="az-collection__filter-group" data-filter-group="fragrance_family">
+              <h3 class="az-collection__filter-title">{{ section.settings.filter_family_label | default: 'Famille olfactive' }}</h3>
+              <div class="az-collection__filter-options">
+                <label class="az-collection__filter-option">
+                  <input type="radio" name="filter-family" value="" data-collection-filter data-filter-key="fragrance_family" checked>
+                  <span>{{ section.settings.filter_all_label | default: 'Toutes' }}</span>
+                </label>
+                {% for fh in family_arr %}
+                  {% if fh != blank %}
+                    {% assign fdisplay = fh | replace: '-', ' ' | capitalize %}
+                    {% for p in products_array %}
+                      {% assign fv = p.metafields.custom.family.value | default: p.metafields.custom.family | default: p.metafields.custom.fragrance_family.value | default: p.metafields.custom.fragrance_family %}
+                      {% if fv != blank and fv | handle == fh %}
+                        {% assign fdisplay = fv %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                    <label class="az-collection__filter-option">
+                      <input type="radio" name="filter-family" value="{{ fh }}" data-collection-filter data-filter-key="fragrance_family">
+                      <span>{{ fdisplay }}</span>
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          {% comment %} Inspired by (metafield) {% endcomment %}
+          {% if inspired_arr.size > 0 %}
+            <div class="az-collection__filter-group" data-filter-group="inspired_by">
+              <h3 class="az-collection__filter-title">{{ section.settings.filter_inspired_label | default: 'Inspiré de' }}</h3>
+              <div class="az-collection__filter-options">
+                <label class="az-collection__filter-option">
+                  <input type="radio" name="filter-inspired" value="" data-collection-filter data-filter-key="inspired_by" checked>
+                  <span>{{ section.settings.filter_all_label | default: 'Tous' }}</span>
+                </label>
+                {% for inh in inspired_arr %}
+                  {% if inh != blank %}
+                    {% assign indisplay = inh | replace: '-', ' ' | capitalize %}
+                    {% for p in products_array %}
+                      {% assign inv = p.metafields.custom.inspired_by.value | default: p.metafields.custom.inspired_by %}
+                      {% if inv != blank and inv | handle == inh %}
+                        {% assign indisplay = inv %}
+                        {% break %}
+                      {% endif %}
+                    {% endfor %}
+                    <label class="az-collection__filter-option">
+                      <input type="radio" name="filter-inspired" value="{{ inh }}" data-collection-filter data-filter-key="inspired_by">
+                      <span>{{ indisplay }}</span>
+                    </label>
+                  {% endif %}
+                {% endfor %}
+              </div>
+            </div>
+          {% endif %}
+
+          <button type="button" class="az-collection__reset" data-collection-reset>{{ section.settings.reset_label | default: 'Réinitialiser les filtres' }}</button>
+        </div>
+      </aside>
+
+      <main class="az-collection__main">
+        <div class="az-collection__toolbar">
+          <div class="az-collection__toolbar-left">
+            <button type="button" class="az-collection__drawer-toggle" data-collection-open-drawer aria-label="Ouvrir les filtres">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 6H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 12H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M3 18H21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span>{{ section.settings.filters_heading | default: 'Filtres' }}</span>
+            </button>
+            <div class="az-collection__chips" data-collection-chips aria-live="polite"></div>
+          </div>
+          <div class="az-collection__count" data-collection-count>
+            <span data-collection-count-num>{{ products_array.size }}</span> {{ section.settings.results_label | default: 'produits' }}
+          </div>
+        </div>
+
+        <div class="az-collection__empty" data-collection-empty hidden>
+          <p>{{ section.settings.no_results_label | default: 'Aucun produit ne correspond à vos filtres.' }}</p>
+          <button type="button" class="az-collection__reset-inline" data-collection-reset>{{ section.settings.reset_label | default: 'Réinitialiser les filtres' }}</button>
+        </div>
+
+        <ul class="az-collection__grid product-grid" role="list" data-collection-grid>
+          {% for product in products_array %}
+            <li class="az-collection__item product-grid__item" data-collection-item>
+              {% render 'product-card',
+                product: product,
+                show_quick_add: true,
+                show_wishlist: true,
+                delay_index: forloop.index0 | modulo: 5 | plus: 1 %}
+            </li>
+          {% endfor %}
+        </ul>
+      </main>
+    </div>
   </div>
+
+  <div class="az-collection__overlay" data-collection-overlay hidden aria-hidden="true"></div>
 </section>
 
 {% schema %}
@@ -61,6 +270,17 @@
   "name": "Collection",
   "tag": "section",
   "class": "section-main-collection",
-  "settings": []
+  "settings": [
+    { "type": "text", "id": "filters_heading", "label": "Filters heading", "default": "Filtres" },
+    { "type": "text", "id": "filter_collection_label", "label": "Category filter label", "default": "Catégorie" },
+    { "type": "text", "id": "filter_price_label", "label": "Price filter label", "default": "Prix" },
+    { "type": "text", "id": "filter_intensity_label", "label": "Intensity filter label", "default": "Intensité" },
+    { "type": "text", "id": "filter_family_label", "label": "Fragrance family filter label", "default": "Famille olfactive" },
+    { "type": "text", "id": "filter_inspired_label", "label": "Inspired by filter label", "default": "Inspiré de" },
+    { "type": "text", "id": "filter_all_label", "label": "All option label", "default": "Toutes" },
+    { "type": "text", "id": "reset_label", "label": "Reset button label", "default": "Réinitialiser les filtres" },
+    { "type": "text", "id": "results_label", "label": "Results count label", "default": "produits" },
+    { "type": "text", "id": "no_results_label", "label": "No results message", "default": "Aucun produit ne correspond à vos filtres." }
+  ]
 }
 {% endschema %}

@@ -1,20 +1,68 @@
-{%- assign product_form_id = 'product-form-' | append: section.id -%}
 {%- liquid
+  assign product_form_id = 'product-form-' | append: section.id
   assign selected_variant = product.selected_or_first_available_variant
   assign has_discount = false
-  if product.compare_at_price > product.price
+  if product.compare_at_price > product.price and product.compare_at_price > 0
     assign has_discount = true
   endif
-  
   assign save_amount = product.compare_at_price | minus: product.price
-  assign coverage_text = ''
-  if product.description contains 'sq ft' or product.description contains 'sqft' or product.description contains 'coverage'
-    assign coverage_text = product.description | split: 'sq' | first | split: 'coverage' | last | strip
+
+  comment
+    Metafields
+  endcomment
+  assign inspired_by = product.metafields.custom.inspired_by.value | default: product.metafields.custom.inspired_by | default: ''
+  assign rating_value = product.metafields.reviews.rating.value | default: product.metafields.custom.rating.value
+  assign review_count_value = product.metafields.reviews.count.value | default: product.metafields.custom.review_count.value
+  assign intensity_value = product.metafields.custom.intensity.value | default: product.metafields.custom.intensity | default: product.metafields.custom.intensity_dots.value | default: ''
+  assign fragrance_family = product.metafields.custom.family.value | default: product.metafields.custom.family | default: product.metafields.custom.fragrance_family.value | default: product.metafields.custom.fragrance_family | default: ''
+  assign coverage_days = product.metafields.custom.coverage.value | default: product.metafields.custom.coverage | default: product.metafields.custom.coverage_days.value | default: product.metafields.custom.coverage_days | default: ''
+  assign burn_time = product.metafields.custom.burn_time.value | default: product.metafields.custom.burn_time | default: ''
+  assign notes_top = product.metafields.custom.top_notes.value | default: product.metafields.custom.top_notes | default: product.metafields.custom.notes_top.value | default: product.metafields.custom.notes_top | default: ''
+  assign notes_heart = product.metafields.custom.heart_notes.value | default: product.metafields.custom.heart_notes | default: product.metafields.custom.notes_heart.value | default: product.metafields.custom.notes_heart | default: ''
+  assign notes_base = product.metafields.custom.base_notes.value | default: product.metafields.custom.base_notes | default: product.metafields.custom.notes_base.value | default: product.metafields.custom.notes_base | default: ''
+  assign product_emoji = product.metafields.custom.emoji.value | default: product.metafields.custom.emoji | default: ''
+  assign ingredients = product.metafields.custom.ingredients.value | default: product.metafields.custom.ingredients | default: ''
+  assign faq_questions = product.metafields.custom.faq_questions.value | default: product.metafields.custom.faq_questions | default: nil
+  assign faq_answers = product.metafields.custom.faq_answers.value | default: product.metafields.custom.faq_answers | default: nil
+
+  assign intensity_dots = 0
+  if intensity_value != blank
+    assign intensity_lc = intensity_value | downcase
+    if intensity_lc == 'light' or intensity_lc == 'légère' or intensity_lc == 'legere'
+      assign intensity_dots = 1
+    elsif intensity_lc == 'medium' or intensity_lc == 'modérée' or intensity_lc == 'moderee'
+      assign intensity_dots = 2
+    elsif intensity_lc == 'strong' or intensity_lc == 'prononcée' or intensity_lc == 'prononcee'
+      assign intensity_dots = 3
+    elsif intensity_lc == 'very strong' or intensity_lc == 'intense'
+      assign intensity_dots = 4
+    elsif intensity_value == '1' or intensity_value == 1
+      assign intensity_dots = 1
+    elsif intensity_value == '2' or intensity_value == 2
+      assign intensity_dots = 2
+    elsif intensity_value == '3' or intensity_value == 3
+      assign intensity_dots = 3
+    elsif intensity_value == '4' or intensity_value == 4
+      assign intensity_dots = 4
+    endif
+  endif
+
+  assign rating_num = rating_value | times: 1.0 | round
+  if rating_num > 5
+    assign rating_num = 5
+  elsif rating_num < 0
+    assign rating_num = 0
   endif
 -%}
 
-<section class="az-product az-page-transition" data-product-page>
-  <!-- Breadcrumbs -->
+<section class="az-product az-page-transition" data-product-page
+  data-product-id="{{ product.id }}"
+  data-variant-id="{{ selected_variant.id }}"
+  data-product-title="{{ product.title | escape }}"
+  data-product-handle="{{ product.handle }}"
+  data-product-image="{% if product.featured_image %}{{ product.featured_image | image_url: width: 400 }}{% endif %}"
+  data-product-url="{{ product.url }}"
+  data-price="{{ product.price }}">
   <div class="page-width">
     <nav class="az-product__breadcrumbs" aria-label="Breadcrumb">
       <ol class="az-product__breadcrumbs-list">
@@ -29,30 +77,29 @@
 
   <div class="page-width az-product__container">
     <div class="az-product__grid">
-      <!-- Product Gallery -->
+      <!-- Gallery (zoom enabled) -->
       <div class="az-product__gallery">
         {% if product.images.size > 0 %}
-          <div class="az-product__gallery-main" data-product-gallery-main>
-            {% for image in product.images %}
-              <div class="az-product__gallery-item {% if forloop.first %}is-active{% endif %}" data-gallery-index="{{ forloop.index0 }}">
-                {{ image | image_url: width: 1200 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                {% if forloop.first and product.tags contains 'new' %}
-                  <span class="az-product__badge">NEW</span>
-                {% elsif forloop.first and has_discount %}
-                  <span class="az-product__badge">SALE</span>
-                {% endif %}
-              </div>
-            {% endfor %}
+          <div class="az-product__gallery-zoom" data-gallery-zoom>
+            <div class="az-product__gallery-main" data-product-gallery-main>
+              {% for image in product.images %}
+                <div class="az-product__gallery-item {% if forloop.first %}is-active{% endif %}" data-gallery-index="{{ forloop.index0 }}">
+                  <img src="{{ image | image_url: width: 1200 }}" alt="{{ product.title | escape }} — {{ forloop.index }}" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}" decoding="async" width="1200" height="1500" {% if forloop.first %}fetchpriority="high"{% endif %} data-gallery-image>
+                </div>
+              {% endfor %}
+              {% if has_discount %}
+                <span class="az-product__badge">SALE</span>
+              {% elsif product.metafields.custom.badges.value contains 'nouveau' or product.tags contains 'new' %}
+                <span class="az-product__badge">NEW</span>
+              {% endif %}
+            </div>
+            <div class="az-product__zoom-lens" data-zoom-lens aria-hidden="true"></div>
           </div>
-          
           {% if product.images.size > 1 %}
             <div class="az-product__gallery-thumbs" data-product-gallery-thumbs>
               {% for image in product.images %}
-                <button class="az-product__gallery-thumb {% if forloop.first %}is-active{% endif %}" 
-                        type="button" 
-                        data-gallery-thumb="{{ forloop.index0 }}"
-                        aria-label="View image {{ forloop.index }}">
-                  {{ image | image_url: width: 200 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
+                <button type="button" class="az-product__gallery-thumb {% if forloop.first %}is-active{% endif %}" data-gallery-thumb="{{ forloop.index0 }}" aria-label="View image {{ forloop.index }}">
+                  {{ image | image_url: width: 200 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title | append: ' — ' | append: forloop.index }}
                 </button>
               {% endfor %}
             </div>
@@ -67,85 +114,122 @@
         {% endif %}
       </div>
 
-      <!-- Product Info -->
+      <!-- Product info -->
       <div class="az-product__info">
-        <!-- Header Info -->
         <div class="az-product__header">
           {% if product.type != blank %}
             <div class="az-product__category">{{ product.type }}</div>
           {% endif %}
-          
-          <h1 class="az-product__title">{{ product.title }}</h1>
-          
-          {% if product.metafields.reviews.rating or product.metafields.reviews.count %}
-            <div class="az-product__rating">
-              {% assign rating = product.metafields.reviews.rating.value | default: 4.5 %}
-              {% assign reviews_count = product.metafields.reviews.count.value | default: 0 %}
+          <h1 class="az-product__title">
+            {% if product_emoji != blank %}<span class="az-product__emoji" aria-hidden="true">{{ product_emoji }}</span> {% endif %}{{ product.title }}
+          </h1>
+          {% if inspired_by != blank %}
+            <p class="az-product__inspired">Inspiré de {{ inspired_by }}®</p>
+          {% endif %}
+          {% if rating_value != blank or review_count_value != blank %}
+            <div class="az-product__rating" aria-label="Rating: {{ rating_num }} out of 5">
               <div class="az-product__stars">
                 {% for i in (1..5) %}
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" 
-                          fill="{% if i <= rating %}currentColor{% else %}none{% endif %}" 
-                          stroke="currentColor" 
-                          stroke-width="2"/>
-                  </svg>
+                  <span class="az-product__star {% if i <= rating_num %}az-product__star--filled{% endif %}" aria-hidden="true">★</span>
                 {% endfor %}
               </div>
-              <span class="az-product__reviews">({{ reviews_count }} reviews)</span>
-            </div>
-          {% endif %}
-          
-          {% if coverage_text != blank %}
-            <div class="az-product__coverage">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2"/>
-                <path d="M12 11C13.1046 11 14 10.1046 14 9C14 7.89543 13.1046 7 12 7C10.8954 7 10 7.89543 10 9C10 10.1046 10.8954 11 12 11Z" stroke="currentColor" stroke-width="2"/>
-              </svg>
-              Covers {{ coverage_text }}
+              {% if review_count_value != blank %}
+                <span class="az-product__reviews">({{ review_count_value }} avis)</span>
+              {% endif %}
             </div>
           {% endif %}
         </div>
 
-        <!-- Purchase Card -->
-        <div class="az-product__purchase">
-          <div class="az-product__pricing">
-            <div class="az-product__price">
-              <span class="az-product__price-current">{{ product.price | money }}</span>
-              {% if has_discount %}
-                <span class="az-product__price-compare">{{ product.compare_at_price | money }}</span>
-                <span class="az-product__save">Save {{ save_amount | money }}</span>
+        <!-- Price -->
+        <div class="az-product__pricing">
+          <div class="az-product__price">
+            <span class="az-product__price-current">{{ product.price | money }}</span>
+            {% if has_discount %}
+              <span class="az-product__price-compare">{{ product.compare_at_price | money }}</span>
+              <span class="az-product__save">Économisez {{ save_amount | money }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <!-- Intensity / Family / Coverage (metafields) -->
+        {% if intensity_dots > 0 or fragrance_family != blank or coverage_days != blank or burn_time != blank %}
+          <div class="az-product__meta-row">
+            {% if intensity_dots > 0 %}
+              <div class="az-product__intensity" aria-label="Intensité: {{ intensity_value }}">
+                <span class="az-product__intensity-label">Intensité</span>
+                <span class="az-product__intensity-dots">
+                  {% for i in (1..4) %}
+                    <span class="az-product__intensity-dot {% if i <= intensity_dots %}az-product__intensity-dot--active{% endif %}"></span>
+                  {% endfor %}
+                </span>
+              </div>
+            {% endif %}
+            {% if fragrance_family != blank or coverage_days != blank or burn_time != blank %}
+              <div class="az-product__meta-line">
+                {% if fragrance_family != blank %}<span>{{ fragrance_family }}</span>{% endif %}
+                {% if coverage_days != blank %}{% if fragrance_family != blank %} · {% endif %}<span>{{ coverage_days }}</span>{% endif %}
+                {% if burn_time != blank %}{% if fragrance_family != blank or coverage_days != blank %} · {% endif %}<span>{{ burn_time }}</span>{% endif %}
+              </div>
+            {% endif %}
+          </div>
+        {% endif %}
+
+        <!-- Olfactive notes (Top / Heart / Base) -->
+        {% if notes_top != blank or notes_heart != blank or notes_base != blank %}
+          <div class="az-product__notes">
+            <h3 class="az-product__notes-title">Notes olfactives</h3>
+            <div class="az-product__notes-grid">
+              {% if notes_top != blank %}
+                <div class="az-product__notes-block">
+                  <span class="az-product__notes-label">Tête</span>
+                  <p class="az-product__notes-text">{{ notes_top }}</p>
+                </div>
+              {% endif %}
+              {% if notes_heart != blank %}
+                <div class="az-product__notes-block">
+                  <span class="az-product__notes-label">Cœur</span>
+                  <p class="az-product__notes-text">{{ notes_heart }}</p>
+                </div>
+              {% endif %}
+              {% if notes_base != blank %}
+                <div class="az-product__notes-block">
+                  <span class="az-product__notes-label">Fond</span>
+                  <p class="az-product__notes-text">{{ notes_base }}</p>
+                </div>
               {% endif %}
             </div>
           </div>
+        {% endif %}
+
+        <!-- Purchase card -->
+        <div class="az-product__purchase">
+          {% if section.settings.show_subscribe_save %}
+            <div class="az-product__subscribe" data-subscribe-save>
+              <label class="az-product__subscribe-label">
+                <input type="checkbox" name="attributes[subscribe_save]" value="1" class="az-product__subscribe-input" data-subscribe-checkbox>
+                <span class="az-product__subscribe-text">Subscribe & Save</span>
+                {% if section.settings.subscribe_discount != blank %}
+                  <span class="az-product__subscribe-badge">{{ section.settings.subscribe_discount }}</span>
+                {% endif %}
+              </label>
+              <p class="az-product__subscribe-desc">{{ section.settings.subscribe_description | default: 'Livraison automatique, économisez à chaque commande.' }}</p>
+            </div>
+          {% endif %}
 
           {% form 'product', product, id: product_form_id, class: 'az-product__form' %}
             {% if product.has_only_default_variant == false %}
               <div class="az-product__variants">
                 {% for option in product.options_with_values %}
                   <div class="az-product__variant-group">
-                    <label class="az-product__variant-label" for="Option-{{ section.id }}-{{ forloop.index0 }}">
-                      {{ option.name }}
-                    </label>
+                    <label class="az-product__variant-label" for="Option-{{ section.id }}-{{ forloop.index0 }}">{{ option.name }}</label>
                     <div class="az-product__variant-options">
                       {% for value in option.values %}
-                        <button type="button" 
-                                class="az-product__variant-option {% if option.selected_value == value %}is-selected{% endif %}"
-                                data-option="{{ option.name | escape }}"
-                                data-value="{{ value | escape }}"
-                                data-option-index="{{ forloop.parentloop.index0 }}"
-                                data-value-index="{{ forloop.index0 }}">
-                          {{ value }}
-                        </button>
+                        <button type="button" class="az-product__variant-option {% if option.selected_value == value %}is-selected{% endif %}" data-variant-option data-option="{{ option.name | escape }}" data-value="{{ value | escape }}" data-option-index="{{ forloop.parentloop.index0 }}" data-value-index="{{ forloop.index0 }}">{{ value }}</button>
                       {% endfor %}
                     </div>
-                    <select id="Option-{{ section.id }}-{{ forloop.index0 }}"
-                            name="options[{{ option.name | escape }}]"
-                            class="az-product__variant-select"
-                            data-variant-select>
+                    <select id="Option-{{ section.id }}-{{ forloop.index0 }}" name="options[{{ option.name | escape }}]" class="az-product__variant-select" data-variant-select hidden>
                       {% for value in option.values %}
-                        <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>
-                          {{ value }}
-                        </option>
+                        <option value="{{ value | escape }}" {% if option.selected_value == value %}selected{% endif %}>{{ value }}</option>
                       {% endfor %}
                     </select>
                   </div>
@@ -154,51 +238,50 @@
             {% endif %}
 
             <div class="az-product__quantity">
-              <label class="az-product__quantity-label" for="Quantity-{{ section.id }}">Quantity</label>
+              <label class="az-product__quantity-label" for="Quantity-{{ section.id }}">Quantité</label>
               <div class="az-product__quantity-controls">
-                <button type="button" class="az-product__qty-btn" data-qty-decrease aria-label="Decrease quantity">−</button>
-                <input type="number" 
-                       id="Quantity-{{ section.id }}"
-                       class="az-product__qty-input" 
-                       name="quantity" 
-                       value="1" 
-                       min="1" 
-                       max="99"
-                       data-qty-input>
-                <button type="button" class="az-product__qty-btn" data-qty-increase aria-label="Increase quantity">+</button>
+                <button type="button" class="az-product__qty-btn" data-qty-decrease aria-label="Diminuer">−</button>
+                <input type="number" id="Quantity-{{ section.id }}" class="az-product__qty-input" name="quantity" value="1" min="1" max="99" data-qty-input>
+                <button type="button" class="az-product__qty-btn" data-qty-increase aria-label="Augmenter">+</button>
               </div>
             </div>
 
             <input type="hidden" name="id" value="{{ selected_variant.id }}" data-variant-id>
-            
-            <button type="submit" 
-                    class="az-product__add-btn {% if is_added %}is-added{% endif %}" 
-                    {% unless selected_variant.available %}disabled{% endunless %}
-                    data-add-to-cart>
-              {% if selected_variant.available %}
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 8px;">
-                  <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
-                  <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
-                  <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                </svg>
-                <span data-add-text>Add to cart</span>
-                <span data-added-text hidden>Added!</span>
-              {% else %}
-                Sold out
-              {% endif %}
-            </button>
+
+            <div class="az-product__cta-row">
+              <button type="submit" class="az-product__add-btn" {% unless selected_variant.available %}disabled{% endunless %} data-add-to-cart>
+                {% if selected_variant.available %}
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/><path d="M3 6H21" stroke="currentColor" stroke-width="2"/><path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                  <span data-add-text>Ajouter au panier</span>
+                  <span data-added-text hidden>Ajouté</span>
+                {% else %}
+                  Rupture de stock
+                {% endif %}
+              </button>
+              <button type="button" class="az-product__wishlist-btn" aria-label="Add to wishlist" data-wishlist-toggle data-product-id="{{ product.id }}">
+                <svg class="az-wishlist-icon az-wishlist-icon--outline" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35L10.55 20.03C5.4 15.36 2 12.28 2 8.5C2 5.42 4.42 3 7.5 3C9.24 3 10.91 3.81 12 5.09C13.09 3.81 14.76 3 16.5 3C19.58 3 22 5.42 22 8.5C22 12.28 18.6 15.36 13.45 20.04L12 21.35Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <svg class="az-wishlist-icon az-wishlist-icon--filled" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+              </button>
+            </div>
           {% endform %}
+        </div>
+
+        <!-- Trust & shipping (compact) -->
+        <div class="az-product__trust">
+          {% if section.settings.trust_shipping != blank %}
+            <p class="az-product__trust-text">{{ section.settings.trust_shipping }}</p>
+          {% else %}
+            <p class="az-product__trust-text">Livraison gratuite à partir de 100 € · Retours sous 30 jours · Paiement sécurisé</p>
+          {% endif %}
         </div>
 
         <!-- Accordions -->
         <div class="az-product__accordions" data-product-accordions>
           {% if product.description != blank %}
             <div class="az-product__accordion">
-              <button class="az-product__accordion-header" type="button" data-accordion-toggle>
+              <button class="az-product__accordion-header" type="button" data-accordion-toggle aria-expanded="false">
                 <span>Description</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
               <div class="az-product__accordion-content">
                 <div class="rte">{{ product.description }}</div>
@@ -206,72 +289,156 @@
             </div>
           {% endif %}
 
-          <div class="az-product__accordion">
-            <button class="az-product__accordion-header" type="button" data-accordion-toggle>
-              <span>Shipping & Returns</span>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <div class="az-product__accordion-content">
-              <p>Free shipping on orders over €100. Returns accepted within 30 days of purchase.</p>
-            </div>
-          </div>
-
-          {% if coverage_text != blank %}
+          {% if ingredients != blank %}
             <div class="az-product__accordion">
-              <button class="az-product__accordion-header" type="button" data-accordion-toggle>
-                <span>Coverage</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
+              <button class="az-product__accordion-header" type="button" data-accordion-toggle aria-expanded="false">
+                <span>Ingrédients</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
               </button>
               <div class="az-product__accordion-content">
-                <p>This product covers {{ coverage_text }}.</p>
+                <div class="rte">{{ ingredients | newline_to_br }}</div>
               </div>
             </div>
           {% endif %}
+
+          {% if faq_questions != blank and faq_answers != blank %}
+            <div class="az-product__accordion">
+              <button class="az-product__accordion-header" type="button" data-accordion-toggle aria-expanded="false">
+                <span>FAQ</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </button>
+              <div class="az-product__accordion-content">
+                <div class="az-product__faq">
+                  {% for question in faq_questions %}
+                    {% assign idx = forloop.index0 %}
+                    {% assign answer = faq_answers[idx] %}
+                    <div class="az-product__faq-item">
+                      <h4 class="az-product__faq-q">{{ question }}</h4>
+                      {% if answer != blank %}<div class="az-product__faq-a rte">{{ answer }}</div>{% endif %}
+                    </div>
+                  {% endfor %}
+                </div>
+              </div>
+            </div>
+          {% endif %}
+
+          <div class="az-product__accordion">
+            <button class="az-product__accordion-header" type="button" data-accordion-toggle aria-expanded="false">
+              <span>Livraison & retours</span>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 9L12 15L18 9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+            <div class="az-product__accordion-content">
+              {% if section.settings.shipping_content != blank %}
+                <div class="rte">{{ section.settings.shipping_content }}</div>
+              {% else %}
+                <p>Livraison gratuite à partir de 100 €. Retours acceptés sous 30 jours. Colis expédié sous 24–48 h.</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        <!-- Reviews section: summary + breakdown + Judge.me / Shopify Reviews widget -->
+        <div class="az-product__reviews-section" data-reviews-section>
+          <h2 class="az-product__reviews-title" id="product-reviews">{{ section.settings.reviews_heading | default: 'Avis clients' }}</h2>
+
+          {% if rating_value != blank or review_count_value != blank %}
+            <div class="az-product__reviews-summary" role="group" aria-label="Rating summary">
+              <div class="az-product__reviews-score">
+                <span class="az-product__reviews-score-value">{{ rating_value | default: 0 }}</span>
+                <span class="az-product__reviews-stars" aria-hidden="true">
+                  {% for i in (1..5) %}
+                    <span class="az-product__star {% if i <= rating_num %}az-product__star--filled{% endif %}">★</span>
+                  {% endfor %}
+                </span>
+                {% if review_count_value != blank and review_count_value != '0' %}
+                  <span class="az-product__reviews-verified">✓ {{ section.settings.verified_label | default: 'Verified buyer' }}</span>
+                {% endif %}
+              </div>
+              <p class="az-product__reviews-based">
+                {% if review_count_value != blank and review_count_value != '0' %}
+                  {{ section.settings.based_on_label | default: 'Based on' }} {{ review_count_value }} {{ section.settings.reviews_label | default: 'reviews' }}
+                {% endif %}
+              </p>
+            </div>
+
+            {% comment %} Rating breakdown: optional metafield custom.rating_breakdown (e.g. "5:80,4:15,3:3,2:1,1:1" = star:percent). Fallback: estimate from average. {% endcomment %}
+            {% assign breakdown_raw = product.metafields.custom.rating_breakdown.value | default: product.metafields.custom.rating_breakdown %}
+            <div class="az-product__reviews-breakdown" aria-label="Rating breakdown">
+              {% for i in (1..5) %}
+                {% assign star = 6 | minus: i %}
+                {% assign pct = 0 %}
+                {% if breakdown_raw != blank %}
+                  {% assign parts = breakdown_raw | split: ',' %}
+                  {% for part in parts %}
+                    {% assign kv = part | split: ':' %}
+                    {% if kv[0] | strip == star | append: '' %}
+                      {% assign pct = kv[1] | strip | default: 0 %}
+                      {% break %}
+                    {% endif %}
+                  {% endfor %}
+                {% else %}
+                  {% comment %} Estimate: center weight around rating_num {% endcomment %}
+                  {% assign diff = rating_num | minus: star | abs %}
+                  {% if diff == 0 %}
+                    {% assign pct = 50 %}
+                  {% elsif diff == 1 %}
+                    {% assign pct = 25 %}
+                  {% else %}
+                    {% assign pct = 5 %}
+                  {% endif %}
+                {% endif %}
+                <div class="az-product__reviews-row">
+                  <span class="az-product__reviews-row-label">{{ star }}★</span>
+                  <div class="az-product__reviews-bar"><span class="az-product__reviews-bar-fill" style="width: {{ pct }}%;"></span></div>
+                  <span class="az-product__reviews-row-pct">{{ pct }}%</span>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% comment %} Judge.me: injects into #judgeme_product_reviews when app is installed. Shopify Reviews: use app block or metafields. {% endcomment %}
+          <div id="judgeme_product_reviews" class="jdgm-widget jdgm-review-widget" data-id="{{ product.id }}" data-product-id="{{ product.id }}" data-product-title="{{ product.title | escape }}" data-auto-install="false" aria-label="Product reviews widget">
+            {% if rating_value == blank and review_count_value == blank %}
+              <div class="az-product__reviews-placeholder">
+                <p>{{ section.settings.no_reviews_label | default: 'Soyez le premier à laisser un avis.' }}</p>
+              </div>
+            {% endif %}
+          </div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- Mobile Bar -->
+  <!-- Mobile sticky bar -->
   <div class="az-product__mobile-bar" data-product-mobile-bar>
     <div class="page-width az-product__mobile-bar-inner">
       <div class="az-product__mobile-price">
         <span class="az-product__mobile-price-current">{{ product.price | money }}</span>
-        {% if has_discount %}
-          <span class="az-product__mobile-price-compare">{{ product.compare_at_price | money }}</span>
-        {% endif %}
+        {% if has_discount %}<span class="az-product__mobile-price-compare">{{ product.compare_at_price | money }}</span>{% endif %}
       </div>
       <button type="button" class="az-product__mobile-add-btn" data-mobile-add-to-cart {% unless selected_variant.available %}disabled{% endunless %}>
-        {% if selected_variant.available %}
-          Add to cart
-        {% else %}
-          Sold out
-        {% endif %}
+        {% if selected_variant.available %}Ajouter au panier{% else %}Rupture de stock{% endif %}
       </button>
     </div>
   </div>
 
-  <!-- Related Products -->
+  <!-- Related -->
   {% if collection and collection.products_count > 1 %}
     <div class="az-product__related">
       <div class="page-width">
-        <h2 class="az-product__related-title">You may also like</h2>
+        <h2 class="az-product__related-title">Vous aimerez aussi</h2>
         <div class="az-product__related-grid">
           {% for related_product in collection.products limit: 4 %}
             {% if related_product.id != product.id %}
-              <div class="az-product__related-item">
-                <a href="{{ related_product.url }}">
-                  {% if related_product.featured_image %}
-                    {{ related_product.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: related_product.title }}
-                  {% endif %}
-                  <h3 class="az-product__related-item-title">{{ related_product.title }}</h3>
-                  <div class="az-product__related-item-price">{{ related_product.price | money }}</div>
-                </a>
-              </div>
+              <a href="{{ related_product.url }}" class="az-product__related-item">
+                {% if related_product.featured_image %}
+                  {{ related_product.featured_image | image_url: width: 400 | image_tag: loading: 'lazy', alt: related_product.title }}
+                {% else %}
+                  <div class="az-product__related-placeholder"></div>
+                {% endif %}
+                <h3 class="az-product__related-item-title">{{ related_product.title }}</h3>
+                <div class="az-product__related-item-price">{{ related_product.price | money }}</div>
+              </a>
             {% endif %}
           {% endfor %}
         </div>
@@ -280,11 +447,141 @@
   {% endif %}
 </section>
 
+{%- comment -%} Product JSON-LD schema {%- endcomment -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": {{ product.title | json }},
+  "description": {{ product.description | strip_html | truncate: 500 | json }},
+  "url": {{ shop.url | append: product.url | json }},
+  "image": [
+    {%- for image in product.images limit: 5 -%}
+      {{ image | image_url: width: 1200 | json }}{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ],
+  "sku": {{ selected_variant.sku | json }},
+  "brand": {
+    "@type": "Brand",
+    "name": {{ product.vendor | default: shop.name | json }
+  },
+  "offers": {
+    "@type": "Offer",
+    "url": {{ shop.url | append: product.url | json }},
+    "priceCurrency": {{ cart.currency.iso_code | default: shop.currency | json }},
+    "price": "{{ selected_variant.price | divided_by: 100.0 }}",
+    "availability": "https://schema.org/{% if selected_variant.available %}InStock{% else %}OutOfStock{% endif %}",
+    "itemCondition": "https://schema.org/NewCondition"
+  }
+  {%- if rating_value != blank and review_count_value != blank and review_count_value != '0' -%}
+  ,"aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "{{ rating_value }}",
+    "reviewCount": "{{ review_count_value }}",
+    "bestRating": "5",
+    "worstRating": "1"
+  }
+  {%- endif -%}
+}
+</script>
+
+{%- if faq_questions != blank and faq_answers != blank -%}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {%- for question in faq_questions -%}
+      {%- assign idx = forloop.index0 -%}
+      {%- assign answer = faq_answers[idx] -%}
+      {
+        "@type": "Question",
+        "name": {{ question | json }},
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": {{ answer | strip_html | json }}
+        }
+      }{% unless forloop.last %},{% endunless %}
+    {%- endfor -%}
+  ]
+}
+</script>
+{%- endif -%}
+
+<script>
+  window.productData = {{ product | json }};
+</script>
+
 {% schema %}
 {
   "name": "Product",
   "tag": "section",
   "class": "section-main-product",
-  "settings": []
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "show_subscribe_save",
+      "label": "Show Subscribe & Save",
+      "default": true
+    },
+    {
+      "type": "text",
+      "id": "subscribe_discount",
+      "label": "Subscribe discount badge",
+      "default": "-10%"
+    },
+    {
+      "type": "textarea",
+      "id": "subscribe_description",
+      "label": "Subscribe description",
+      "default": "Livraison automatique, économisez à chaque commande."
+    },
+    {
+      "type": "textarea",
+      "id": "trust_shipping",
+      "label": "Trust & shipping line",
+      "default": "Livraison gratuite à partir de 100 € · Retours sous 30 jours · Paiement sécurisé"
+    },
+    {
+      "type": "html",
+      "id": "shipping_content",
+      "label": "Shipping & returns content",
+      "default": ""
+    },
+    {
+      "type": "header",
+      "content": "Reviews"
+    },
+    {
+      "type": "text",
+      "id": "reviews_heading",
+      "label": "Reviews heading",
+      "default": "Avis clients"
+    },
+    {
+      "type": "text",
+      "id": "verified_label",
+      "label": "Verified buyer label",
+      "default": "Verified buyer"
+    },
+    {
+      "type": "text",
+      "id": "based_on_label",
+      "label": "Based on label",
+      "default": "Based on"
+    },
+    {
+      "type": "text",
+      "id": "reviews_label",
+      "label": "Reviews count label",
+      "default": "reviews"
+    },
+    {
+      "type": "text",
+      "id": "no_reviews_label",
+      "label": "No reviews message",
+      "default": "Soyez le premier à laisser un avis."
+    }
+  ]
 }
 {% endschema %}

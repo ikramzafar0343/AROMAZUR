@@ -26,7 +26,33 @@
     assign perfumes_collection = collections['fragrances']
   endif
 
+  assign hotel_collection = collections['hotel-collection']
+  if hotel_collection == blank
+    assign hotel_collection = collections['hotel']
+  endif
+  assign designer_collection = collections['designer-collection']
+  if designer_collection == blank
+    assign designer_collection = collections['designer']
+  endif
+  assign coffrets_collection = collections['coffrets']
+
   assign all_url = routes.all_products_collection_url
+
+  if hotel_collection != blank
+    assign hotel_url = hotel_collection.url
+  else
+    assign hotel_url = all_url
+  endif
+  if designer_collection != blank
+    assign designer_url = designer_collection.url
+  else
+    assign designer_url = all_url
+  endif
+  if coffrets_collection != blank
+    assign coffrets_url = coffrets_collection.url
+  else
+    assign coffrets_url = diffusers_url
+  endif
 
   if diffusers_collection != blank
     assign diffusers_url = diffusers_collection.url
@@ -75,6 +101,41 @@
   <div class="az-col-slider__viewport" aria-label="Collections">
     <div class="az-col-slider__track az-marquee-component az-marquee-component--pause-on-hover" style="--marquee-duration: 32s; --marquee-gap: 24px;">
       {% capture collection_cards %}
+          <a class="az-col-card" role="listitem" href="{{ hotel_url }}" style="--az-g1: #E8F4FD; --az-g2: #D4E8F7;">
+          <div class="az-col-card__inner">
+            <div class="az-col-card__icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M9 22V12h6v10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="az-col-card__title">Hotel Collection</h3>
+            <p class="az-col-card__desc">Inspired by luxury hotels</p>
+            <div class="az-col-card__cta">
+              <span>Explore</span>
+              <span class="az-col-card__arrow" aria-hidden="true">→</span>
+            </div>
+          </div>
+        </a>
+
+          <a class="az-col-card" role="listitem" href="{{ designer_url }}" style="--az-g1: #F5EDE8; --az-g2: #EDE4DC;">
+          <div class="az-col-card__inner">
+            <div class="az-col-card__icon" aria-hidden="true">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M9 5C9 3.34315 10.3431 2 12 2C13.6569 2 15 3.34315 15 5V6H9V5Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M7 6H17V22H7V6Z" stroke="currentColor" stroke-width="2"/>
+                <path d="M10 10H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="az-col-card__title">Designer Collection</h3>
+            <p class="az-col-card__desc">Inspired by haute perfumery</p>
+            <div class="az-col-card__cta">
+              <span>Explore</span>
+              <span class="az-col-card__arrow" aria-hidden="true">→</span>
+            </div>
+          </div>
+        </a>
+
           <a class="az-col-card" role="listitem" href="{{ diffusers_url }}" style="--az-g1: #CDEBFA; --az-g2: #DDF7F0;">
           <div class="az-col-card__inner">
             <div class="az-col-card__icon" aria-hidden="true">
@@ -85,8 +146,8 @@
                 <path d="M9 16H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
             </div>
-            <h3 class="az-col-card__title">Diffusers</h3>
-            <p class="az-col-card__desc">Signature diffusion • Up to 46m² coverage</p>
+            <h3 class="az-col-card__title">Diffusers &amp; Coffrets</h3>
+            <p class="az-col-card__desc">Complete fragrance systems</p>
             <div class="az-col-card__cta">
               <span>Explore</span>
               <span class="az-col-card__arrow" aria-hidden="true">→</span>

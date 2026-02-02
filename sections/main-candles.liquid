@@ -41,9 +41,9 @@
   <div class="az-candles__hero">
     <div class="page-width az-candles__hero-inner">
       <div class="az-candles__hero-content">
-        <div class="az-candles__eyebrow">CANDLES</div>
-        <h1 class="az-candles__title">Premium Scented Candles</h1>
-        <p class="az-candles__desc">Transform your space with our handcrafted candles, each one carefully designed to create the perfect ambiance for any moment.</p>
+        {% if section.settings.eyebrow != blank %}<div class="az-candles__eyebrow">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.title != blank %}<h1 class="az-candles__title">{{ section.settings.title }}</h1>{% endif %}
+        {% if section.settings.description != blank %}<p class="az-candles__desc">{{ section.settings.description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -169,121 +169,28 @@
         <div class="az-candles__grid" data-candles-grid>
           {% for product in candles_products %}
             {% liquid
-              assign category_token = ''
               assign type_lc = product.type | downcase
               case type_lc
                 when 'candles'
                   assign category_token = 'candles'
                 when 'room sprays'
                   assign category_token = 'room-sprays'
+                else
+                  assign category_token = type_lc | handle
               endcase
-              
-              if category_token == blank
-                assign category_token = type_lc | handle
-              endif
-              
               assign on_sale = false
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
-              
-              assign scent_family = 'Floral'
-              assign burn_time = '50-60 Hours'
-              assign wax_type = 'Soy Blend'
-              
-              for tag in product.tags
-                assign tag_lc = tag | downcase
-                if tag_lc contains 'woody' or tag_lc contains 'santal' or tag_lc contains 'one'
-                  assign scent_family = 'Woody'
-                  break
-                elsif tag_lc contains 'fresh' or tag_lc contains 'ocean' or tag_lc contains 'breeze'
-                  assign scent_family = 'Fresh'
-                  break
-                elsif tag_lc contains 'fruity' or tag_lc contains 'cherry' or tag_lc contains 'love'
-                  assign scent_family = 'Fruity'
-                  break
-                elsif tag_lc contains 'floral' or tag_lc contains 'day' or tag_lc contains 'tea'
-                  assign scent_family = 'Floral'
-                  break
-                elsif tag_lc contains 'oriental'
-                  assign scent_family = 'Oriental'
-                  break
-                endif
-              endfor
-              
-              if product.description contains 'hours' or product.description contains 'Hours'
-                assign burn_time_start = product.description | split: 'hours' | first | split: 'Hours' | first
-                if burn_time_start != blank
-                  assign burn_time = burn_time_start | append: ' Hours' | strip
-                endif
-              endif
             %}
-            
-            <div class="az-candles__product-wrapper">
-              {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-              <div class="az-candles__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
-                   data-candles-product 
-                   data-category="{{ category_token }}"
-                   data-scent-family="{{ scent_family | handle }}"
-                   data-price="{{ product.price }}"
-                   data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
-                <a class="az-prod__link" href="{{ product.url }}">
-                  <div class="az-prod__media">
-                    {% if product.featured_image %}
-                      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                    {% else %}
-                      <div class="az-prod__placeholder"></div>
-                    {% endif %}
-                    {% if on_sale %}
-                      <span class="az-prod__badge">SALE</span>
-                    {% endif %}
-                  </div>
-                  <div class="az-prod__body">
-                    <h3 class="az-prod__title">{{ product.title }}</h3>
-                    <div class="az-prod__price">
-                      <span class="az-prod__price-current">{{ product.price | money }}</span>
-                      {% if on_sale %}
-                        <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                </a>
-
-                <div class="az-prod__actions">
-                  {% form 'product', product, class: 'az-prod__form' %}
-                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                    <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                      {% if product.selected_or_first_available_variant.available %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                          <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
-                          <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
-                          <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        Add to cart
-                      {% else %}
-                        Sold out
-                      {% endif %}
-                    </button>
-                  {% endform %}
-                </div>
-              </div>
-              
-              <!-- Candle Details -->
-              <div class="az-candles__product-details">
-                <div class="az-candles__product-meta">
-                  <span class="az-candles__product-burn">
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 4px;">
-                      <path d="M8.5 14.5A2.5 2.5 0 0 0 11 12C11 10.5 8.5 8 8.5 8C8.5 8 6 10.5 6 12A2.5 2.5 0 0 0 8.5 14.5Z" fill="currentColor"/>
-                      <path d="M12 2C12 2 9 4 9 7C9 9 11 11 12 11C13 11 15 9 15 7C15 4 12 2 12 2Z" stroke="currentColor" stroke-width="2"/>
-                      <path d="M12 22V11" stroke="currentColor" stroke-width="2"/>
-                    </svg>
-                    {{ burn_time }}
-                  </span>
-                  <span class="az-candles__product-separator">|</span>
-                  <span class="az-candles__product-family">{{ scent_family }}</span>
-                </div>
-              </div>
-            </div>
+            {% assign card_data_attrs = 'data-candles-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' %}
+            {% render 'product-card',
+              product: product,
+              show_quick_add: true,
+              show_wishlist: true,
+              delay_index: forloop.index0 | modulo: 5 | plus: 1,
+              data_attrs: card_data_attrs,
+              wrapper_class: 'az-candles__product-wrapper' %}
           {% endfor %}
         </div>
 
@@ -372,7 +279,7 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Transform your space with our handcrafted candles, each one carefully designed to create the perfect ambiance for any moment."
+      "default": ""
     }
   ],
   "presets": [

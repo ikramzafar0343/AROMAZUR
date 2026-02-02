@@ -1,0 +1,239 @@
+{% liquid
+  assign quiz_collection = section.settings.collection
+  if quiz_collection == blank
+    assign quiz_collection = collections['fragrance-oils']
+  endif
+  if quiz_collection == blank
+    assign quiz_collection = collections['all']
+  endif
+  assign quiz_products = quiz_collection.products
+%}
+<section class="az-quiz az-page-transition" id="scent-voyage-quiz" data-scent-quiz data-add-to-cart-label="{{ section.settings.add_to_cart_label | default: 'Add to cart' | escape }}" aria-labelledby="quiz-title">
+  <div class="page-width az-quiz__container">
+    <header class="az-quiz__header">
+      <h1 class="az-quiz__title" id="quiz-title">{{ section.settings.title | default: 'Find Your Scent' }}</h1>
+      {% if section.settings.subtitle != blank %}
+        <p class="az-quiz__subtitle">{{ section.settings.subtitle }}</p>
+      {% endif %}
+    </header>
+
+    <div class="az-quiz__steps" data-quiz-steps>
+      <div class="az-quiz__step" data-quiz-step="1" data-step-active>
+        <h2 class="az-quiz__step-title">{{ section.settings.step1_title | default: 'What ambiance are you after?' }}</h2>
+        <div class="az-quiz__options" data-quiz-options role="group" aria-label="Ambiance">
+          <button type="button" class="az-quiz__option" data-quiz-option value="relaxing">{{ section.settings.ambiance_relaxing | default: 'Relaxing & calm' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="fresh">{{ section.settings.ambiance_fresh | default: 'Fresh & clean' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="cozy">{{ section.settings.ambiance_cozy | default: 'Cozy & warm' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="luxe">{{ section.settings.ambiance_luxe | default: 'Luxe & elegant' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="energizing">{{ section.settings.ambiance_energizing | default: 'Energizing & bright' }}</button>
+        </div>
+      </div>
+
+      <div class="az-quiz__step" data-quiz-step="2" hidden>
+        <h2 class="az-quiz__step-title">{{ section.settings.step2_title | default: 'How intense do you like your scent?' }}</h2>
+        <div class="az-quiz__options" data-quiz-options role="group" aria-label="Intensity">
+          <button type="button" class="az-quiz__option" data-quiz-option value="light">{{ section.settings.intensity_light | default: 'Light' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="medium">{{ section.settings.intensity_medium | default: 'Medium' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="strong">{{ section.settings.intensity_strong | default: 'Strong' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="very-strong">{{ section.settings.intensity_very_strong | default: 'Very Strong' }}</button>
+        </div>
+      </div>
+
+      <div class="az-quiz__step" data-quiz-step="3" hidden>
+        <h2 class="az-quiz__step-title">{{ section.settings.step3_title | default: 'What’s your budget?' }}</h2>
+        <div class="az-quiz__options" data-quiz-options role="group" aria-label="Budget">
+          <button type="button" class="az-quiz__option" data-quiz-option value="under-25">{{ section.settings.budget_under | default: 'Under €25' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="25-50">{{ section.settings.budget_mid | default: '€25 – €50' }}</button>
+          <button type="button" class="az-quiz__option" data-quiz-option value="50-plus">{{ section.settings.budget_plus | default: '€50+' }}</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="az-quiz__nav">
+      <button type="button" class="az-quiz__btn az-quiz__btn--back" data-quiz-back hidden aria-label="Previous step">Back</button>
+      <span class="az-quiz__progress" data-quiz-progress aria-live="polite">Step 1 of 3</span>
+      <button type="button" class="az-quiz__btn az-quiz__btn--next" data-quiz-next disabled aria-label="Next step">Next</button>
+    </div>
+
+    <div class="az-quiz__results" data-quiz-results hidden>
+      <h2 class="az-quiz__results-title">{{ section.settings.results_title | default: 'Your recommendations' }}</h2>
+      <ul class="az-quiz__results-grid" data-quiz-results-grid role="list"></ul>
+      <button type="button" class="az-quiz__restart" data-quiz-restart>{{ section.settings.restart_label | default: 'Start over' }}</button>
+    </div>
+  </div>
+
+  <script type="application/json" data-quiz-products>
+    [
+      {% for product in quiz_products %}
+        {% liquid
+          assign intensity_val = product.metafields.custom.intensity.value | default: product.metafields.custom.intensity | default: ''
+          assign family_val = product.metafields.custom.fragrance_family.value | default: product.metafields.custom.fragrance_family | default: ''
+          assign intensity_handle = intensity_val | handle
+          assign family_handle = family_val | handle
+        %}
+        {
+          "id": {{ product.id | json }},
+          "title": {{ product.title | json }},
+          "handle": {{ product.handle | json }},
+          "url": {{ product.url | json }},
+          "featured_image": {% if product.featured_image %}{{ product.featured_image | image_url: width: 500 | json }}{% else %}null{% endif %},
+          "price": {{ product.price }},
+          "variant_id": {{ product.selected_or_first_available_variant.id | json }},
+          "available": {{ product.selected_or_first_available_variant.available | json }},
+          "tags": [{% for tag in product.tags %}{{ tag | downcase | json }}{% unless forloop.last %},{% endunless %}{% endfor %}],
+          "intensity": {{ intensity_handle | json }},
+          "fragrance_family": {{ family_handle | json }},
+          "fragrance_family_label": {{ family_val | default: '' | json }}
+        }{% unless forloop.last %},{% endunless %}
+      {% endfor %}
+    ]
+  </script>
+</section>
+
+{% schema %}
+{
+  "name": "Scent Voyage Quiz",
+  "tag": "section",
+  "class": "section-scent-voyage-quiz",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Page setup"
+    },
+    {
+      "type": "paragraph",
+      "content": "Create a page (e.g. handle: scent-voyage) and assign template \"Scent voyage\" to show this quiz at /pages/scent-voyage."
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Collection",
+      "info": "Products to recommend from. Default: Fragrance Oils."
+    },
+    {
+      "type": "text",
+      "id": "title",
+      "label": "Title",
+      "default": "Find Your Scent"
+    },
+    {
+      "type": "textarea",
+      "id": "subtitle",
+      "label": "Subtitle"
+    },
+    {
+      "type": "text",
+      "id": "step1_title",
+      "label": "Step 1 title",
+      "default": "What ambiance are you after?"
+    },
+    {
+      "type": "text",
+      "id": "ambiance_relaxing",
+      "label": "Ambiance: Relaxing",
+      "default": "Relaxing & calm"
+    },
+    {
+      "type": "text",
+      "id": "ambiance_fresh",
+      "label": "Ambiance: Fresh",
+      "default": "Fresh & clean"
+    },
+    {
+      "type": "text",
+      "id": "ambiance_cozy",
+      "label": "Ambiance: Cozy",
+      "default": "Cozy & warm"
+    },
+    {
+      "type": "text",
+      "id": "ambiance_luxe",
+      "label": "Ambiance: Luxe",
+      "default": "Luxe & elegant"
+    },
+    {
+      "type": "text",
+      "id": "ambiance_energizing",
+      "label": "Ambiance: Energizing",
+      "default": "Energizing & bright"
+    },
+    {
+      "type": "text",
+      "id": "step2_title",
+      "label": "Step 2 title",
+      "default": "How intense do you like your scent?"
+    },
+    {
+      "type": "text",
+      "id": "intensity_light",
+      "label": "Intensity: Light",
+      "default": "Light"
+    },
+    {
+      "type": "text",
+      "id": "intensity_medium",
+      "label": "Intensity: Medium",
+      "default": "Medium"
+    },
+    {
+      "type": "text",
+      "id": "intensity_strong",
+      "label": "Intensity: Strong",
+      "default": "Strong"
+    },
+    {
+      "type": "text",
+      "id": "intensity_very_strong",
+      "label": "Intensity: Very Strong",
+      "default": "Very Strong"
+    },
+    {
+      "type": "text",
+      "id": "step3_title",
+      "label": "Step 3 title",
+      "default": "What's your budget?"
+    },
+    {
+      "type": "text",
+      "id": "budget_under",
+      "label": "Budget: Under €25",
+      "default": "Under €25"
+    },
+    {
+      "type": "text",
+      "id": "budget_mid",
+      "label": "Budget: €25–€50",
+      "default": "€25 – €50"
+    },
+    {
+      "type": "text",
+      "id": "budget_plus",
+      "label": "Budget: €50+",
+      "default": "€50+"
+    },
+    {
+      "type": "text",
+      "id": "results_title",
+      "label": "Results title",
+      "default": "Your recommendations"
+    },
+    {
+      "type": "text",
+      "id": "restart_label",
+      "label": "Restart button",
+      "default": "Start over"
+    },
+    {
+      "type": "text",
+      "id": "add_to_cart_label",
+      "label": "Add to cart button",
+      "default": "Add to cart"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Scent Voyage Quiz"
+    }
+  ]
+}
+{% endschema %}

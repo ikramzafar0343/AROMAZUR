@@ -5,59 +5,15 @@
   assign brand_description = "Aromazur embodies the refined elegance of the French Riviera, where timeless sophistication meets modern artistry. Inspired by the perfumery heritage of Grasse, each creation reflects a delicate balance of nature, emotion, and savoir‑faire."
   assign currency_code = 'USD'
 
+  comment
+    Fixed Shopify URLs (routing only — no broken links)
+  endcomment
   assign all_url = routes.all_products_collection_url
-
-  assign diffusers_collection = collections['scent-diffusers']
-  if diffusers_collection == blank
-    assign diffusers_collection = collections['diffusers']
-  endif
-
-  assign oils_collection = collections['fragrance-oils']
-  if oils_collection == blank
-    assign oils_collection = collections['diffuser-oils']
-  endif
-
-  assign voyage_collection = collections['voyage']
-  if voyage_collection == blank
-    assign voyage_collection = collections['scent-voyage']
-  endif
-
-  assign candles_collection = collections['candles']
-
-  assign perfumes_collection = collections['perfumes']
-  if perfumes_collection == blank
-    assign perfumes_collection = collections['fragrances']
-  endif
-
-  if diffusers_collection != blank
-    assign diffusers_url = diffusers_collection.url
-  else
-    assign diffusers_url = all_url
-  endif
-
-  if oils_collection != blank
-    assign oils_url = oils_collection.url
-  else
-    assign oils_url = all_url
-  endif
-
-  if voyage_collection != blank
-    assign voyage_url = voyage_collection.url
-  else
-    assign voyage_url = all_url
-  endif
-
-  if candles_collection != blank
-    assign candles_url = candles_collection.url
-  else
-    assign candles_url = all_url
-  endif
-
-  if perfumes_collection != blank
-    assign perfumes_url = perfumes_collection.url
-  else
-    assign perfumes_url = all_url
-  endif
+  assign diffusers_url = '/collections/diffusers'
+  assign oils_url = '/collections/fragrance-oils'
+  assign voyage_url = '/pages/scent-voyage'
+  assign candles_url = '/collections/candles'
+  assign perfumes_url = '/collections/perfumes'
 %}
 
 <footer class="az-footer" data-section-id="{{ section.id }}">
@@ -112,6 +68,17 @@
           <li><a href="{{ voyage_url }}">Scent Voyage</a></li>
           <li><a href="/pages/contact">Contact</a></li>
           <li><a href="#faq">FAQ</a></li>
+          <li><a href="{{ shop.url }}/sitemap.xml">Sitemap</a></li>
+        </ul>
+      </div>
+
+      <div class="az-footer__col">
+        <div class="az-footer__label">Legal</div>
+        <ul class="az-footer__links" role="list">
+          <li><a href="{{ shop.url }}/policies/privacy-policy">Privacy Policy</a></li>
+          <li><a href="{{ shop.url }}/policies/terms-of-service">Terms of Service</a></li>
+          <li><a href="{{ shop.url }}/pages/cgv">CGV</a></li>
+          <li><a href="{{ shop.url }}/pages/mentions-legales">Mentions légales</a></li>
         </ul>
       </div>
 

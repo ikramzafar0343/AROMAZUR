@@ -1,0 +1,324 @@
+{
+  "instructions": "Appliquer ces metafields dans Shopify Admin (fiche produit ou Éditeur en masse). Namespace : custom. Toutes les valeurs sont en français et normalisées.",
+  "value_sets": {
+    "intensity": ["Légère", "Modérée", "Prononcée", "Intense"],
+    "family": ["Floral", "Floraux frais", "Floraux verts", "Boisé", "Boisé aromatique", "Boisé épicé", "Frais propre", "Aromatique frais", "Aromatique herbacé", "Vert frais", "Marin frais", "Oriental boisé", "Oriental gourmand", "Gourmand floral", "Fruité frais", "Varié"]
+  },
+  "products": [
+    {
+      "handle": "diffuser-air-2-discovery-kit",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.intensity_dots": "",
+        "custom.family": "",
+        "custom.coverage": "Jusqu'à 1 000 pi²",
+        "custom.inspired_by": "",
+        "custom.top_notes": "",
+        "custom.heart_notes": "",
+        "custom.base_notes": "",
+        "custom.emoji": "💨",
+        "custom.badges": ["nouveau"]
+      }
+    },
+    {
+      "handle": "diffuser-mini-2-le",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.intensity_dots": "",
+        "custom.family": "",
+        "custom.coverage": "500 pi²",
+        "custom.inspired_by": "",
+        "custom.top_notes": "",
+        "custom.heart_notes": "",
+        "custom.base_notes": "",
+        "custom.emoji": "💨",
+        "custom.badges": ["best-seller"]
+      }
+    },
+    {
+      "handle": "diffuser-pro-2",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.intensity_dots": "",
+        "custom.family": "",
+        "custom.coverage": "Jusqu'à 2 000 pi²",
+        "custom.inspired_by": "",
+        "custom.top_notes": "",
+        "custom.heart_notes": "",
+        "custom.base_notes": "",
+        "custom.emoji": "💨",
+        "custom.badges": ["nouveau"]
+      }
+    },
+    {
+      "handle": "coffret-decouverte",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.intensity_dots": "",
+        "custom.family": "Varié",
+        "custom.coverage": "Coffret cadeau",
+        "custom.inspired_by": "",
+        "custom.top_notes": "",
+        "custom.heart_notes": "",
+        "custom.base_notes": "",
+        "custom.emoji": "🎁",
+        "custom.badges": ["stock-limite"]
+      }
+    },
+    {
+      "handle": "blanc-de-provence",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Floraux frais",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Palaces de Provence",
+        "custom.top_notes": "Lavande, Bergamote",
+        "custom.heart_notes": "Fleurs blanches, Coton",
+        "custom.base_notes": "Musc, Bois blancs",
+        "custom.emoji": "🌸",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "spa-blanc",
+      "metafields": {
+        "custom.intensity": "Légère",
+        "custom.intensity_dots": "1",
+        "custom.family": "Aromatique frais",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Spas cinq étoiles",
+        "custom.top_notes": "Eucalyptus, Menthe",
+        "custom.heart_notes": "Thé blanc, Bambou",
+        "custom.base_notes": "Musc propre, Cèdre",
+        "custom.emoji": "✨",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "lin-blanc",
+      "metafields": {
+        "custom.intensity": "Légère",
+        "custom.intensity_dots": "1",
+        "custom.family": "Frais propre",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Linge d'hôtel de luxe",
+        "custom.top_notes": "Aldéhydes, Agrumes",
+        "custom.heart_notes": "Lin blanc, Lys",
+        "custom.base_notes": "Musc, Bois doux",
+        "custom.emoji": "☁️",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "cote-plage",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Marin frais",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Hôtels de la Riviera",
+        "custom.top_notes": "Sel marin, Citron, Néroli",
+        "custom.heart_notes": "Jasmin, Notes solaires",
+        "custom.base_notes": "Bois flotté, Ambre",
+        "custom.emoji": "🌊",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "jardin-mediterranee",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Floraux verts",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Jardins de villas méditerranéennes",
+        "custom.top_notes": "Fleur d'oranger, Feuille de figuier",
+        "custom.heart_notes": "Jasmin, Romarin, Basilic",
+        "custom.base_notes": "Figue, Cèdre, Musc",
+        "custom.emoji": "🍃",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "bois-d-ete",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Boisé",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Salons d'hôtels de charme",
+        "custom.top_notes": "Cèdre, Bergamote",
+        "custom.heart_notes": "Santal, Lavande",
+        "custom.base_notes": "Ambre, Vanille, Musc",
+        "custom.emoji": "🪵",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "fleur-d-oranger",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Floral",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Signature palaces",
+        "custom.top_notes": "Néroli, Agrumes",
+        "custom.heart_notes": "Fleur d'oranger, Tubéreuse",
+        "custom.base_notes": "Musc blanc, Miel",
+        "custom.emoji": "🌸",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "lavande-sauge",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Aromatique herbacé",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Auberges de Provence",
+        "custom.top_notes": "Lavande, Sauge",
+        "custom.heart_notes": "Lavandin, Thym",
+        "custom.base_notes": "Herbes boisées, Musc",
+        "custom.emoji": "🌿",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "the-vert-menthe",
+      "metafields": {
+        "custom.intensity": "Légère",
+        "custom.intensity_dots": "1",
+        "custom.family": "Vert frais",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Salons de thé et lobbys",
+        "custom.top_notes": "Thé vert, Menthe",
+        "custom.heart_notes": "Thé blanc, Concombre",
+        "custom.base_notes": "Feuilles vertes, Musc",
+        "custom.emoji": "🍵",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "bleu-azur",
+      "metafields": {
+        "custom.intensity": "Prononcée",
+        "custom.intensity_dots": "3",
+        "custom.family": "Boisé aromatique",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style Bleu de Chanel",
+        "custom.top_notes": "Citron, Gingembre, Menthe",
+        "custom.heart_notes": "Lavande, Cèdre",
+        "custom.base_notes": "Santal, Patchouli, Ambre",
+        "custom.emoji": "🌊",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "sauvage-noir",
+      "metafields": {
+        "custom.intensity": "Prononcée",
+        "custom.intensity_dots": "3",
+        "custom.family": "Boisé épicé",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style Sauvage",
+        "custom.top_notes": "Bergamote, Poivre",
+        "custom.heart_notes": "Lavande, Géranium",
+        "custom.base_notes": "Ambroxan, Cèdre, Vanille",
+        "custom.emoji": "🔥",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "oud-royal",
+      "metafields": {
+        "custom.intensity": "Intense",
+        "custom.intensity_dots": "4",
+        "custom.family": "Oriental boisé",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Oud de luxe",
+        "custom.top_notes": "Safran, Bergamote",
+        "custom.heart_notes": "Oud, Rose, Encens",
+        "custom.base_notes": "Santal, Musc, Ambre",
+        "custom.emoji": "🌙",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "j-adore-fleurs",
+      "metafields": {
+        "custom.intensity": "Prononcée",
+        "custom.intensity_dots": "3",
+        "custom.family": "Floral",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style J'adore",
+        "custom.top_notes": "Ylang-ylang, Bergamote",
+        "custom.heart_notes": "Jasmin, Rose, Iris",
+        "custom.base_notes": "Vanille, Musc",
+        "custom.emoji": "🌸",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "light-blue-sky",
+      "metafields": {
+        "custom.intensity": "Modérée",
+        "custom.intensity_dots": "2",
+        "custom.family": "Fruité frais",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style Light Blue",
+        "custom.top_notes": "Pomme, Cèdre, Campanule",
+        "custom.heart_notes": "Jasmin, Rose blanche",
+        "custom.base_notes": "Cèdre, Musc",
+        "custom.emoji": "🍋",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "black-opium-night",
+      "metafields": {
+        "custom.intensity": "Prononcée",
+        "custom.intensity_dots": "3",
+        "custom.family": "Oriental gourmand",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style Black Opium",
+        "custom.top_notes": "Poivre rose, Fleur d'oranger",
+        "custom.heart_notes": "Café, Jasmin",
+        "custom.base_notes": "Vanille, Cèdre, Patchouli",
+        "custom.emoji": "☕",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "la-vie-est-belle",
+      "metafields": {
+        "custom.intensity": "Prononcée",
+        "custom.intensity_dots": "3",
+        "custom.family": "Gourmand floral",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style La Vie Est Belle",
+        "custom.top_notes": "Cassis, Poire",
+        "custom.heart_notes": "Iris, Praliné, Fleur d'oranger",
+        "custom.base_notes": "Patchouli, Vanille, Tonka",
+        "custom.emoji": "🍬",
+        "custom.badges": []
+      }
+    },
+    {
+      "handle": "angel-etoile",
+      "metafields": {
+        "custom.intensity": "Intense",
+        "custom.intensity_dots": "4",
+        "custom.family": "Oriental gourmand",
+        "custom.coverage": "30–60 jours",
+        "custom.inspired_by": "Style Angel",
+        "custom.top_notes": "Bergamote, Melon, Noix de coco",
+        "custom.heart_notes": "Jasmin, Baies rouges",
+        "custom.base_notes": "Patchouli, Vanille, Ambre",
+        "custom.emoji": "⭐",
+        "custom.badges": []
+      }
+    }
+  ]
+}

@@ -4,9 +4,9 @@
   <div class="az-contact__hero">
     <div class="page-width az-contact__hero-inner">
       <div class="az-contact__hero-content">
-        <div class="az-contact__eyebrow">Support</div>
-        <h1 class="az-contact__title">Contact</h1>
-        <p class="az-contact__desc">Need guidance selecting a fragrance that reflects the delicate balance of nature, emotion, and savoir‑faire? Our team is here to help you discover the essence of the French Riviera.</p>
+        {% if section.settings.eyebrow != blank %}<div class="az-contact__eyebrow">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.title != blank %}<h1 class="az-contact__title">{{ section.settings.title }}</h1>{% endif %}
+        {% if section.settings.description != blank %}<p class="az-contact__desc">{{ section.settings.description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -123,7 +123,7 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Need guidance selecting a fragrance that reflects the delicate balance of nature, emotion, and savoir‑faire? Our team is here to help you discover the essence of the French Riviera."
+      "default": ""
     }
   ],
   "presets": [

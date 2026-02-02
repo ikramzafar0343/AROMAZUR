@@ -1,0 +1,13 @@
+{
+  "sections": {
+    "main_wishlist": {
+      "type": "main-wishlist",
+      "settings": {
+        "title": "Wishlist",
+        "empty_message": "Your wishlist is empty.",
+        "continue_shopping_label": "Continue shopping"
+      }
+    }
+  },
+  "order": ["main_wishlist"]
+}

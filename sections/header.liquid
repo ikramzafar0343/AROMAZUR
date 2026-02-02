@@ -2,117 +2,110 @@
   assign promo_messages = "FREE SHIPPING OVER €100|LIMITED DROPS WEEKLY|WINTER EVENT: EXTRA 20% OFF|FREE SHIPPING OVER €100"
   assign promo_messages_lines = promo_messages | split: '|'
 
-  assign new_collection = collections['new']
-  assign sale_collection = collections['sale']
-
-  assign diffusers_collection = collections['scent-diffusers']
-  if diffusers_collection == blank
-    assign diffusers_collection = collections['diffusers']
-  endif
-
-  assign oils_collection = collections['fragrance-oils']
-  if oils_collection == blank
-    assign oils_collection = collections['diffuser-oils']
-  endif
-
-  assign voyage_collection = collections['voyage']
-  if voyage_collection == blank
-    assign voyage_collection = collections['scent-voyage']
-  endif
+  comment
+    Fixed Shopify URLs (routing only — no broken links)
+  endcomment
+  assign shop_all_url = routes.all_products_collection_url
+  assign new_url = '/collections/new-arrivals'
+  assign sale_url = '/collections/sale'
+  assign diffusers_url = '/collections/diffusers'
+  assign oils_url = '/collections/fragrance-oils'
+  assign voyage_url = '/pages/scent-voyage'
 
   assign room_sprays_collection = collections['fragrance-room-sprays']
   if room_sprays_collection == blank
     assign room_sprays_collection = collections['room-sprays']
   endif
-
   assign candles_collection = collections['candles']
   assign perfumes_collection = collections['perfumes']
   if perfumes_collection == blank
     assign perfumes_collection = collections['fragrances']
   endif
-
   assign hotel_collection = collections['hotel']
   assign designer_collection = collections['designer']
   assign winter_collection = collections['winter']
   assign disney_collection = collections['disney']
   assign spring_collection = collections['spring']
 
-  if new_collection != blank
-    assign new_url = new_collection.url
-  else
-    assign new_url = routes.all_products_collection_url
-  endif
-
-  if sale_collection != blank
-    assign sale_url = sale_collection.url
-  else
-    assign sale_url = routes.all_products_collection_url
-  endif
-
-  if diffusers_collection != blank
-    assign diffusers_url = diffusers_collection.url
-  else
-    assign diffusers_url = routes.all_products_collection_url
-  endif
-
-  if oils_collection != blank
-    assign oils_url = oils_collection.url
-  else
-    assign oils_url = routes.all_products_collection_url
-  endif
-
-  if voyage_collection != blank
-    assign voyage_url = voyage_collection.url
-  else
-    assign voyage_url = routes.all_products_collection_url
-  endif
-
   if room_sprays_collection != blank
     assign room_sprays_url = room_sprays_collection.url
   else
-    assign room_sprays_url = routes.all_products_collection_url
+    assign room_sprays_url = '/collections/room-sprays'
   endif
-
   if candles_collection != blank
     assign candles_url = candles_collection.url
   else
-    assign candles_url = routes.all_products_collection_url
+    assign candles_url = '/collections/candles'
   endif
-
   if perfumes_collection != blank
     assign perfumes_url = perfumes_collection.url
   else
-    assign perfumes_url = routes.all_products_collection_url
+    assign perfumes_url = '/collections/perfumes'
   endif
-
   if hotel_collection != blank
     assign hotel_url = hotel_collection.url
   else
-    assign hotel_url = routes.all_products_collection_url
+    assign hotel_url = '/collections/hotel'
   endif
-
   if designer_collection != blank
     assign designer_url = designer_collection.url
   else
-    assign designer_url = routes.all_products_collection_url
+    assign designer_url = '/collections/designer'
   endif
-
   if winter_collection != blank
     assign winter_url = winter_collection.url
   else
-    assign winter_url = routes.all_products_collection_url
+    assign winter_url = '/collections/winter'
   endif
-
   if disney_collection != blank
     assign disney_url = disney_collection.url
   else
-    assign disney_url = routes.all_products_collection_url
+    assign disney_url = '/collections/disney'
   endif
-
   if spring_collection != blank
     assign spring_url = spring_collection.url
   else
-    assign spring_url = routes.all_products_collection_url
+    assign spring_url = '/collections/spring'
+  endif
+
+  assign request_path = request.path | downcase
+  assign is_shop_all = false
+  if request_path == '/collections/all' or request_path == '/collections/all/'
+    assign is_shop_all = true
+  endif
+  assign is_new = false
+  if request_path contains 'new-arrivals'
+    assign is_new = true
+  endif
+  assign is_sale = false
+  if request_path contains '/collections/sale'
+    assign is_sale = true
+  endif
+  assign is_diffusers = false
+  if request_path contains '/collections/diffusers'
+    unless request_path contains 'fragrance-oils'
+      assign is_diffusers = true
+    endunless
+  endif
+  assign is_oils = false
+  if request_path contains '/collections/fragrance-oils'
+    assign is_oils = true
+  endif
+  assign is_voyage = false
+  if request_path contains 'scent-voyage'
+    assign is_voyage = true
+  endif
+  assign is_room_sprays = false
+  if request_path contains 'room-sprays'
+    assign is_room_sprays = true
+  endif
+  assign is_candles = false
+  if request_path contains '/collections/candles'
+    assign is_candles = true
+  endif
+  assign is_perfumes = false
+  if request_path contains '/collections/perfumes' or request_path contains '/collections/fragrances'
+    assign is_perfumes = true
   endif
 %}
 
@@ -179,6 +172,13 @@
             </button>
             {% endif %}
 
+        <a class="az-icon-btn" href="/pages/wishlist" aria-label="Wishlist" data-wishlist-link style="position: relative;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="az-badge" data-wishlist-count hidden>0</span>
+          </a>
+
         <button class="az-icon-btn" type="button" aria-label="Cart" data-cart-toggle aria-controls="CartModal-{{ section.id }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
@@ -193,7 +193,9 @@
 
   <div class="az-nav" style="position: relative; overflow: visible;">
     <div class="page-width az-nav__inner">
-      <a class="az-logo" href="{{ routes.root_url }}">AROMAZUR</a>
+      <a class="az-logo" href="{{ routes.root_url }}" aria-label="AROMAZUR – Accueil">
+        <img class="az-logo__img" src="{{ 'AROMZUR_LOGO.png' | asset_url }}" alt="AROMAZUR" width="160" height="40" loading="eager" fetchpriority="high">
+      </a>
 
       <nav class="az-desktop-nav" aria-label="Main navigation" style="overflow: visible;">
         <div class="az-nav-scroll-wrapper">
@@ -202,7 +204,7 @@
         <div class="az-nav-scroll">
             <!-- SHOP ALL -->
             <div class="az-nav-item" data-mega-type="shop_all">
-              <a class="az-nav-link az-nav-link--button" href="{{ routes.all_products_collection_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_shop_all %} az-nav-link--active{% endif %}" href="{{ shop_all_url }}"{% if is_shop_all %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
                   <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
@@ -254,7 +256,7 @@
 
             <!-- #NEW -->
             <div class="az-nav-item">
-              <a class="az-nav-link az-nav-link--button" href="{{ new_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_new %} az-nav-link--active{% endif %}" href="{{ new_url }}"{% if is_new %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M9.937 15.5L2.257 7.82C1.914 7.477 1.914 6.923 2.257 6.58L3.58 5.257C3.923 4.914 4.477 4.914 4.82 5.257L12.5 12.937M9.937 15.5L12.5 18.063L20.18 10.383C20.523 10.04 20.523 9.486 20.18 9.143L18.857 7.82C18.514 7.477 17.96 7.477 17.617 7.82L9.937 15.5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M2.257 7.82L9.937 15.5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -270,7 +272,7 @@
                 <span class="az-pill" style="background: #dc2626;">$4 OILS</span>
                 <span class="az-pill" style="background: #dc2626;">ALMOST SOLD OUT</span>
               </div>
-              <a class="az-nav-link" href="{{ sale_url }}">
+              <a class="az-nav-link{% if is_sale %} az-nav-link--active{% endif %}" href="{{ sale_url }}"{% if is_sale %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M20.59 13.41L13.42 20.58C13.2343 20.766 13.0007 20.8605 12.76 20.8605C12.5193 20.8605 12.2857 20.766 12.1 20.58L3.42 11.9C3.23405 11.7142 3.13964 11.4807 3.13964 11.24C3.13964 10.9993 3.23405 10.7658 3.42 10.58L10.59 3.41C10.776 3.22405 11.0096 3.12964 11.25 3.12964C11.4904 3.12964 11.724 3.22405 11.91 3.41L20.59 12.09C20.776 12.2758 20.8704 12.5093 20.8704 12.75C20.8704 12.9907 20.776 13.2242 20.59 13.41Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
@@ -280,7 +282,7 @@
 
             <!-- DIFFUSERS -->
             <div class="az-nav-item" data-mega-type="diffusers">
-              <a class="az-nav-link az-nav-link--button" href="{{ diffusers_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_diffusers %} az-nav-link--active{% endif %}" href="{{ diffusers_url }}"{% if is_diffusers %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M18 10H21C21.5304 10 22.0391 10.2107 22.4142 10.5858C22.7893 10.9609 23 11.4696 23 12C23 12.5304 22.7893 13.0391 22.4142 13.4142C22.0391 13.7893 21.5304 14 21 14H18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M2 10H6L7 19H17L18 10H22" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -344,7 +346,7 @@
 
             <!-- DIFFUSER OILS -->
             <div class="az-nav-item" data-mega-type="diffuser_oils">
-              <a class="az-nav-link az-nav-link--button" href="{{ oils_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_oils %} az-nav-link--active{% endif %}" href="{{ oils_url }}"{% if is_oils %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M9 2V6H15V2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M9 6H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -390,7 +392,7 @@
               <div class="az-nav-badges" aria-hidden="true">
                 <span class="az-pill" style="background: #dc2626;">NEW</span>
               </div>
-              <a class="az-nav-link" href="{{ voyage_url }}">
+              <a class="az-nav-link{% if is_voyage %} az-nav-link--active{% endif %}" href="{{ voyage_url }}"{% if is_voyage %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M12 2C8.13 2 5 5.13 5 9C5 14.25 12 22 12 22C12 22 19 14.25 19 9C19 5.13 15.87 2 12 2Z" stroke="currentColor" stroke-width="2"/>
                   <path d="M12 11C13.1046 11 14 10.1046 14 9C14 7.89543 13.1046 7 12 7C10.8954 7 10 7.89543 10 9C10 10.1046 10.8954 11 12 11Z" stroke="currentColor" stroke-width="2"/>
@@ -404,7 +406,7 @@
               <div class="az-nav-badges" aria-hidden="true">
                 <span class="az-pill" style="background: #dc2626;">50% OFF</span>
               </div>
-              <a class="az-nav-link az-nav-link--button" href="{{ room_sprays_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_room_sprays %} az-nav-link--active{% endif %}" href="{{ room_sprays_url }}"{% if is_room_sprays %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M10 2H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                   <path d="M9 6H15" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -429,7 +431,7 @@
 
             <!-- CANDLES -->
             <div class="az-nav-item" data-mega-type="candles">
-              <a class="az-nav-link az-nav-link--button" href="{{ candles_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_candles %} az-nav-link--active{% endif %}" href="{{ candles_url }}"{% if is_candles %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M12 2C13.5 4 14 5.5 14 7C14 8.65685 12.6569 10 11 10C9.34315 10 8 8.65685 8 7C8 5.5 8.5 4 10 2" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                   <path d="M7 12H17V22H7V12Z" stroke="currentColor" stroke-width="2"/>
@@ -452,7 +454,7 @@
 
             <!-- PERFUMES -->
             <div class="az-nav-item" data-mega-type="perfumes">
-              <a class="az-nav-link az-nav-link--button" href="{{ perfumes_url }}">
+              <a class="az-nav-link az-nav-link--button{% if is_perfumes %} az-nav-link--active{% endif %}" href="{{ perfumes_url }}"{% if is_perfumes %} aria-current="page"{% endif %}>
                 <svg class="az-nav-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                   <path d="M9 5C9 3.34315 10.3431 2 12 2C13.6569 2 15 3.34315 15 5V6H9V5Z" stroke="currentColor" stroke-width="2"/>
                   <path d="M7 6H17V22H7V6Z" stroke="currentColor" stroke-width="2"/>
@@ -507,7 +509,8 @@
     <div class="az-search" data-search-panel hidden>
       <div class="page-width az-search__inner">
         <form action="{{ routes.search_url }}" method="get" role="search" class="az-search__form">
-          <input type="search" name="q" placeholder="Search..." aria-label="Search">
+          <input type="hidden" name="type" value="product">
+          <input type="search" name="q" placeholder="Search..." aria-label="Search" autocomplete="off">
           <button type="submit">Search</button>
         </form>
       </div>
@@ -527,15 +530,15 @@
         </div>
         <div class="az-mobile__content">
           <ul class="az-mobile__list" role="list">
-            <li><a href="{{ routes.all_products_collection_url }}">SHOP ALL</a></li>
-            <li><a href="{{ new_url }}">#NEW</a></li>
-            <li><a href="{{ sale_url }}">SALE</a></li>
-            <li><a href="{{ diffusers_url }}">DIFFUSERS</a></li>
-            <li><a href="{{ oils_url }}">DIFFUSER OILS</a></li>
-            <li><a href="{{ voyage_url }}">SCENT VOYAGE</a></li>
-            <li><a href="{{ room_sprays_url }}">ROOM SPRAYS</a></li>
-            <li><a href="{{ candles_url }}">CANDLES</a></li>
-            <li><a href="{{ perfumes_url }}">PERFUMES</a></li>
+            <li><a href="{{ shop_all_url }}"{% if is_shop_all %} class="az-mobile__link--active" aria-current="page"{% endif %}>SHOP ALL</a></li>
+            <li><a href="{{ new_url }}"{% if is_new %} class="az-mobile__link--active" aria-current="page"{% endif %}>#NEW</a></li>
+            <li><a href="{{ sale_url }}"{% if is_sale %} class="az-mobile__link--active" aria-current="page"{% endif %}>SALE</a></li>
+            <li><a href="{{ diffusers_url }}"{% if is_diffusers %} class="az-mobile__link--active" aria-current="page"{% endif %}>DIFFUSERS</a></li>
+            <li><a href="{{ oils_url }}"{% if is_oils %} class="az-mobile__link--active" aria-current="page"{% endif %}>DIFFUSER OILS</a></li>
+            <li><a href="{{ voyage_url }}"{% if is_voyage %} class="az-mobile__link--active" aria-current="page"{% endif %}>SCENT VOYAGE</a></li>
+            <li><a href="{{ room_sprays_url }}"{% if is_room_sprays %} class="az-mobile__link--active" aria-current="page"{% endif %}>ROOM SPRAYS</a></li>
+            <li><a href="{{ candles_url }}"{% if is_candles %} class="az-mobile__link--active" aria-current="page"{% endif %}>CANDLES</a></li>
+            <li><a href="{{ perfumes_url }}"{% if is_perfumes %} class="az-mobile__link--active" aria-current="page"{% endif %}>PERFUMES</a></li>
           </ul>
           <div class="az-mobile__utilities">
             <a href="{{ routes.search_url }}">Search</a>
@@ -587,7 +590,7 @@
       <div class="az-cart__overlay" data-cart-close></div>
       <div class="az-cart__panel">
         <div class="az-cart__header">
-          <h2 class="az-cart__title">CART</h2>
+          <h2 class="az-cart__title" data-cart-title-base="{{ 'cart.title' | t | default: 'Panier' }}">{{ 'cart.title' | t | default: 'Panier' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h2>
           <button class="az-cart__close" type="button" aria-label="Close cart" data-cart-close>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -603,8 +606,8 @@
                 <path d="M10 2H14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
                 <path d="M9 7C9 5.34315 10.3431 4 12 4C13.6569 4 15 5.34315 15 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
               </svg>
-              <p>Your cart is empty.</p>
-              <a href="{{ routes.all_products_collection_url }}" class="az-cart__continue">Continue shopping</a>
+              <p>{{ 'cart.empty' | t | default: 'Votre panier est vide.' }}</p>
+              <a href="{{ routes.all_products_collection_url }}" class="az-cart__continue az-btn az-btn--primary">{{ 'cart.discover' | t | default: 'Découvrir nos parfums' }}</a>
           </div>
 
           <div class="az-cart__items" data-cart-items {% if cart.item_count == 0 %}hidden{% endif %}>
@@ -642,16 +645,21 @@
           </div>
         </div>
 
-        <div class="az-cart__footer" {% if cart.item_count == 0 %}hidden{% endif %}>
+        <div class="az-cart__footer" data-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
           <div class="az-cart__summary">
+            <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite"></div>
             <div class="az-cart__summary-row az-cart__summary-row--total">
-              <span>Subtotal</span>
+              <span>{{ 'cart.subtotal' | t | default: 'Sous-total' }}</span>
               <span class="az-cart__total" data-cart-total>{{ cart.total_price | money }}</span>
             </div>
           </div>
-          <a href="{{ routes.cart_url }}" class="az-cart__checkout">
-            Proceed to Checkout
-          </a>
+          <div class="az-cart__actions">
+            <a href="{{ routes.cart_url }}" class="az-cart__view-cart az-btn az-btn--outline">{{ 'cart.view_cart' | t | default: 'Voir le panier' }}</a>
+            <a href="/checkout" class="az-cart__checkout az-btn az-btn--primary">
+              {{ 'cart.checkout' | t | default: 'Passer la commande' }}
+            </a>
+          </div>
+          <p class="az-cart__trust">{{ 'cart.trust_badge' | t | default: 'Paiement sécurisé par Stripe' }}</p>
         </div>
       </div>
     </div>

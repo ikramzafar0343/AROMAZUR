@@ -1,0 +1,152 @@
+{
+  "collections": [
+    {
+      "handle": "best-sellers",
+      "title": "Best Sellers",
+      "description": "Our most popular diffusers and fragrance oils. Customer favorites, always in demand.",
+      "rule_type": "smart",
+      "sort_order": "best-selling",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "tag", "relation": "equals", "condition": "best-seller" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "Auto-updates when products are tagged 'best-seller'. Initially empty; tag top sellers in Admin."
+    },
+    {
+      "handle": "sale",
+      "title": "Sale",
+      "description": "Special offers on select diffusers and fragrance oils. Limited-time savings.",
+      "rule_type": "smart",
+      "sort_order": "best-selling",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "compare_at_price", "relation": "greater_than", "condition": "0" }
+      ],
+      "conditions_match": "ANY",
+      "conditions_alt": "OR: Product tag equals 'sale' (so Coffret Découverte appears). In Shopify: add two rule groups—(1) Compare at price > 0, (2) Tag equals sale.",
+      "notes": "Auto-updates: all products with compare-at price (3 diffusers) plus any product tagged 'sale' (e.g. Coffret Découverte)."
+    },
+    {
+      "handle": "new",
+      "title": "New Arrivals",
+      "description": "Our newest fragrances and diffusers. Be the first to discover what's new at Aromazur.",
+      "rule_type": "smart",
+      "sort_order": "created-desc",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "tag", "relation": "equals", "condition": "new-arrivals" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "Auto-updates when products are tagged 'new-arrivals'. Currently: Diffuser Air 2, Diffuser Pro 2, Coffret Découverte."
+    },
+    {
+      "handle": "gift-ideas",
+      "title": "Gift Ideas",
+      "description": "Curated gifts and discovery sets. The perfect present for fragrance lovers.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "tag", "relation": "equals", "condition": "gift" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "Coffret Découverte has tag 'gift'; add tag to future gift sets."
+    },
+    {
+      "handle": "hotel",
+      "title": "Hotel Collection",
+      "description": "Luxury fragrance oils inspired by the world's finest hotels. Signature scents that evoke white linens, spa serenity, and coastal elegance.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "tag", "relation": "equals", "condition": "hotel-collection" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "9 oils. No cross-talk with Designer (different tag)."
+    },
+    {
+      "handle": "designer",
+      "title": "Designer Collection",
+      "description": "Designer-inspired fragrance oils. Iconic scent profiles crafted for your space—sophisticated, bold, and unmistakably luxurious.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "tag", "relation": "equals", "condition": "designer-collection" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "8 oils. No cross-talk with Hotel."
+    },
+    {
+      "handle": "diffusers",
+      "title": "Diffusers",
+      "description": "Premium scent diffusers for home and office. Elegant diffusion systems with coverage from 500 to 2,000 sq ft.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "product_type", "relation": "equals", "condition": "Diffusers" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "3 products. Product type = Diffusers."
+    },
+    {
+      "handle": "coffrets",
+      "title": "Coffrets",
+      "description": "Curated discovery coffrets and gift sets. The perfect introduction to Aromazur's world of fragrance.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "product_type", "relation": "equals", "condition": "Coffrets" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "Coffret Découverte. Product type = Coffrets."
+    },
+    {
+      "handle": "fragrance-oils",
+      "title": "Fragrance Oils",
+      "description": "Premium fragrance oils for diffusers. Hotel Collection and Designer Collection—all in one place.",
+      "rule_type": "smart",
+      "sort_order": "manual",
+      "conditions": [
+        { "column": "vendor", "relation": "equals", "condition": "AROMAZUR" },
+        { "column": "product_type", "relation": "equals", "condition": "Fragrance Oils" }
+      ],
+      "conditions_match": "ALL",
+      "notes": "17 oils (Hotel + Designer). Product type = Fragrance Oils."
+    }
+  ],
+  "suggested_nav_order": [
+    "all",
+    "new",
+    "sale",
+    "best-sellers",
+    "diffusers",
+    "fragrance-oils",
+    "hotel",
+    "designer",
+    "coffrets",
+    "gift-ideas"
+  ],
+  "featured_products": {
+    "best-sellers": ["diffuser-mini-2-le", "blanc-de-provence", "bleu-azur"],
+    "sale": ["diffuser-air-2-discovery-kit", "diffuser-mini-2-le", "coffret-decouverte"],
+    "new": ["diffuser-air-2-discovery-kit", "diffuser-pro-2", "coffret-decouverte"],
+    "gift-ideas": ["coffret-decouverte"],
+    "hotel": ["blanc-de-provence", "fleur-d-oranger", "cote-plage"],
+    "designer": ["bleu-azur", "sauvage-noir", "black-opium-night"],
+    "diffusers": ["diffuser-air-2-discovery-kit", "diffuser-mini-2-le", "diffuser-pro-2"],
+    "coffrets": ["coffret-decouverte"],
+    "fragrance-oils": ["blanc-de-provence", "bleu-azur", "black-opium-night"]
+  },
+  "theme_assumptions": {
+    "header_nav": "Expects collections: new, sale, diffusers, fragrance-oils (or diffuser-oils), hotel, designer, voyage, candles, perfumes",
+    "home_collection_slider": "Uses handles: hotel, designer, diffusers (and optionally coffrets). See sections/home-collection-slider.liquid.",
+    "diffusers_page": "Uses handle 'diffusers' or 'scent-diffusers' → main-diffusers section",
+    "oils_page": "Uses handle 'fragrance-oils' or 'diffuser-oils' or 'oils' → main-fragrance-oils section",
+    "collection_template": "templates/collection.json maps handles to sections; 'main' is fallback for hotel, designer, coffrets"
+  }
+}

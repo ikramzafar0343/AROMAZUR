@@ -2,6 +2,19 @@
   "accessibility": {
     "skip_to_content": "Skip to content"
   },
+  "cart": {
+    "title": "Panier",
+    "empty": "Votre panier est vide.",
+    "continue_shopping": "Continuer mes achats",
+    "discover": "Découvrir nos parfums",
+    "view_cart": "Voir le panier",
+    "subtotal": "Sous-total",
+    "checkout": "Passer la commande",
+    "trust_badge": "Paiement sécurisé par Stripe",
+    "added_to_cart": "✓ Ajouté au panier",
+    "free_shipping_remaining": "Plus que {{ amount }} pour la livraison gratuite",
+    "free_shipping_qualified": "Livraison gratuite offerte"
+  },
   "general": {
     "pagination": {
       "page": "Page {{ number }}"
@@ -18,7 +31,7 @@
       "cart": "Cart",
       "open_menu": "Open menu",
       "close_menu": "Close menu",
-      "dropdown_help": "Assign a menu to this dropdown in the section settings."
+      "dropdown_help": "Select a menu in theme settings."
     }
   }
 }

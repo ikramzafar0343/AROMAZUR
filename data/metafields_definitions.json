@@ -1,0 +1,108 @@
+{
+  "namespace": "custom",
+  "description": "Metafields produit AROMAZUR. Valeurs en français, lisibles. Pas de logique UI en dur.",
+  "definitions": [
+    {
+      "key": "intensity",
+      "name": "Intensité",
+      "type": "single_line_text_field",
+      "validation": {
+        "allowed_values": ["Légère", "Modérée", "Prononcée", "Intense"],
+        "allow_blank": true
+      },
+      "description": "Niveau d'intensité olfactive. Utilisé par les filtres et l'affichage (cartes, PDP).",
+      "used_in": ["collection_filter", "product_card", "product_page"]
+    },
+    {
+      "key": "intensity_dots",
+      "name": "Intensité (points)",
+      "type": "number_integer",
+      "validation": {
+        "min": 0,
+        "max": 4,
+        "allow_blank": true
+      },
+      "description": "Nombre de points à afficher (1 = Légère, 4 = Intense). Si vide, le thème peut dériver de intensity.",
+      "used_in": ["product_card", "product_page"]
+    },
+    {
+      "key": "family",
+      "name": "Famille olfactive",
+      "type": "single_line_text_field",
+      "validation": {
+        "allowed_values": [
+          "Floral", "Floraux frais", "Floraux verts", "Boisé", "Boisé aromatique", "Boisé épicé",
+          "Frais propre", "Aromatique frais", "Aromatique herbacé", "Vert frais", "Marin frais",
+          "Oriental boisé", "Oriental gourmand", "Gourmand floral", "Fruité frais", "Varié"
+        ],
+        "allow_blank": true
+      },
+      "description": "Famille olfactive. Liste fermée pour cohérence des filtres.",
+      "used_in": ["collection_filter", "product_card", "product_page"]
+    },
+    {
+      "key": "coverage",
+      "name": "Couverture / durée",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Diffuseurs : surface (ex. Jusqu'à 1 000 pi²). Huiles : durée (ex. 30–60 jours). Coffrets : Coffret cadeau.",
+      "used_in": ["product_card", "product_page"]
+    },
+    {
+      "key": "inspired_by",
+      "name": "Inspiré de",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Inspiration (marque, lieu, style). Affichage « Inspiré de … ».",
+      "used_in": ["collection_filter", "product_card", "product_page"]
+    },
+    {
+      "key": "top_notes",
+      "name": "Notes de tête",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Notes de tête (français, virgules autorisées).",
+      "used_in": ["product_page"]
+    },
+    {
+      "key": "heart_notes",
+      "name": "Notes de cœur",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Notes de cœur (français).",
+      "used_in": ["product_page"]
+    },
+    {
+      "key": "base_notes",
+      "name": "Notes de fond",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Notes de fond (français).",
+      "used_in": ["product_page"]
+    },
+    {
+      "key": "emoji",
+      "name": "Emoji",
+      "type": "single_line_text_field",
+      "validation": {},
+      "description": "Un emoji par produit (affichage cartes, facettes). Vide autorisé.",
+      "used_in": ["product_card", "product_page"]
+    },
+    {
+      "key": "badges",
+      "name": "Badges",
+      "type": "list.single_line_text_field",
+      "validation": {
+        "allowed_values": ["best-seller", "nouveau", "stock-limite", "livraison-offerte"]
+      },
+      "description": "Badges produit. Affichage géré par le thème.",
+      "used_in": ["product_card"]
+    }
+  ],
+  "shopify_admin_steps": [
+    "Paramètres → Données personnalisées → Produits",
+    "Créer le namespace 'custom' si besoin",
+    "Ajouter une définition par clé ci-dessus (type et nom comme indiqué)",
+    "Après import produits : renseigner les metafields via Éditeur en masse ou fiche produit"
+  ]
+}

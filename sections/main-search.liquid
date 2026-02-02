@@ -1,8 +1,15 @@
+{% comment %}
+  Search results – products only (type=product).
+  Search scope (Shopify default): product title, description, product_type, vendor, tags.
+  To also search: Notes (metafields) / Inspired by (metafield) / Collection names –
+  add those values to product description or tags, or use Search & Discovery app to index metafields.
+{% endcomment %}
 <section class="main-search az-page-transition">
   <div class="page-width">
-    <h1 class="az-fade-in az-fade-in--up az-fade-in--delay-1">Search</h1>
+    <h1 class="main-search__h1 az-fade-in az-fade-in--up az-fade-in--delay-1">Search</h1>
 
-    <form action="{{ routes.search_url }}" method="get" role="search" class="az-fade-in az-fade-in--up az-fade-in--delay-1">
+    <form action="{{ routes.search_url }}" method="get" role="search" class="az-fade-in az-fade-in--up az-fade-in--delay-1 main-search__form">
+      <input type="hidden" name="type" value="product">
       <input type="search" name="q" value="{{ search.terms | escape }}" placeholder="Search products..." autocomplete="off">
       <button type="submit">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
@@ -15,14 +22,18 @@
     {% if search.performed %}
       <h2 class="az-fade-in az-fade-in--up az-fade-in--delay-2">Results</h2>
       {% if search.results_count == 0 %}
-        <p class="az-fade-in az-fade-in--up az-fade-in--delay-2" style="text-align: center; padding: var(--spacing-3xl) 0; color: var(--color-text-muted);">
+        <p class="az-fade-in az-fade-in--up az-fade-in--delay-2 main-search__empty">
           No results found for "{{ search.terms | escape }}".
         </p>
       {% else %}
-        <ul role="list" class="az-fade-in az-fade-in--up az-fade-in--delay-2">
-          {% for item in search.results %}
-            <li class="az-hover-lift" style="animation-delay: {{ forloop.index0 | times: 0.03 }}s;">
-              <a href="{{ item.url }}">{{ item.title }}</a>
+        <ul class="main-search__grid product-grid az-fade-in az-fade-in--up az-fade-in--delay-2" role="list">
+          {% for product in search.results %}
+            <li class="product-grid__item" style="animation-delay: {{ forloop.index0 | times: 0.03 }}s;">
+              {% render 'product-card',
+                product: product,
+                show_quick_add: true,
+                show_wishlist: true,
+                delay_index: forloop.index0 | modulo: 5 | plus: 1 %}
             </li>
           {% endfor %}
         </ul>

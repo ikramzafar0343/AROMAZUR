@@ -48,9 +48,9 @@
   <div class="az-voyage__hero">
     <div class="page-width az-voyage__hero-inner">
       <div class="az-voyage__hero-content">
-        <div class="az-voyage__eyebrow">SCENT VOYAGE</div>
-        <h1 class="az-voyage__title">Discover Fragrances from Around the World</h1>
-        <p class="az-voyage__desc">Embark on a sensory journey with our curated collection of destination-inspired scents and discovery sets.</p>
+        {% if section.settings.eyebrow != blank %}<div class="az-voyage__eyebrow">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.title != blank %}<h1 class="az-voyage__title">{{ section.settings.title }}</h1>{% endif %}
+        {% if section.settings.description != blank %}<p class="az-voyage__desc">{{ section.settings.description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -189,7 +189,6 @@
         <div class="az-voyage__grid" data-voyage-grid>
           {% for product in voyage_products %}
             {% liquid
-              assign category_token = ''
               assign type_lc = product.type | downcase
               case type_lc
                 when 'diffusers'
@@ -204,17 +203,13 @@
                   assign category_token = 'perfumes'
                 when 'discovery sets'
                   assign category_token = 'discovery-sets'
+                else
+                  assign category_token = type_lc | handle
               endcase
-              
-              if category_token == blank
-                assign category_token = type_lc | handle
-              endif
-              
               assign on_sale = false
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
-              
               assign destination_tag = 'all'
               for tag in product.tags
                 assign tag_lc = tag | downcase
@@ -236,54 +231,14 @@
                 endif
               endfor
             %}
-            
-            {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-            <div class="az-voyage__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
-                 data-voyage-product 
-                 data-category="{{ category_token }}"
-                 data-destination="{{ destination_tag }}"
-                 data-price="{{ product.price }}"
-                 data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
-              <a class="az-prod__link" href="{{ product.url }}">
-                <div class="az-prod__media">
-                  {% if product.featured_image %}
-                    {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                  {% else %}
-                    <div class="az-prod__placeholder"></div>
-                  {% endif %}
-                  {% if on_sale %}
-                    <span class="az-prod__badge">SALE</span>
-                  {% endif %}
-                </div>
-                <div class="az-prod__body">
-                  <h3 class="az-prod__title">{{ product.title }}</h3>
-                  <div class="az-prod__price">
-                    <span class="az-prod__price-current">{{ product.price | money }}</span>
-                    {% if on_sale %}
-                      <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
-                    {% endif %}
-                  </div>
-                </div>
-              </a>
-
-              <div class="az-prod__actions">
-                {% form 'product', product, class: 'az-prod__form' %}
-                  <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                  <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                    {% if product.selected_or_first_available_variant.available %}
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                        <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
-                        <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
-                        <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                      </svg>
-                      Add to cart
-                    {% else %}
-                      Sold out
-                    {% endif %}
-                  </button>
-                {% endform %}
-              </div>
-            </div>
+            {% assign card_data_attrs = 'data-voyage-product data-category="' | append: category_token | append: '" data-destination="' | append: destination_tag | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' %}
+            {% render 'product-card',
+              product: product,
+              show_quick_add: true,
+              show_wishlist: true,
+              delay_index: forloop.index0 | modulo: 5 | plus: 1,
+              data_attrs: card_data_attrs,
+              wrapper_class: 'az-voyage__product-wrapper' %}
           {% endfor %}
         </div>
 
@@ -301,29 +256,18 @@
   </div>
 
   <!-- Featured Destination Section -->
+  {% if section.settings.featured_title != blank or section.settings.featured_description != blank or section.settings.featured_cta != blank or section.settings.featured_url != blank %}
   <div class="az-voyage__featured">
     <div class="az-voyage__featured-bg"></div>
     <div class="page-width az-voyage__featured-inner">
       <div class="az-voyage__featured-content">
-        <div class="az-voyage__featured-eyebrow">Featured Destination</div>
-        <h2 class="az-voyage__featured-title">
-          Summer in <span class="az-voyage__featured-title-italic">Santorini</span>
-        </h2>
-        <p class="az-voyage__featured-desc">
-          Experience the essence of the Greek islands with our Santorini-inspired fragrance collection. 
-          Capturing the warmth of the Mediterranean sun and the freshness of the Aegean Sea.
-        </p>
-        <a href="{{ section.settings.featured_url | default: '/collections/santorini' }}" class="az-voyage__featured-btn">
-          Explore Santorini Collection
-        </a>
-      </div>
-      <div class="az-voyage__featured-divider"></div>
-      <div class="az-voyage__featured-meta">
-        <div class="az-voyage__featured-meta-label">Launch date</div>
-        <div class="az-voyage__featured-meta-value">June 2024</div>
+        {% if section.settings.featured_title != blank %}<h2 class="az-voyage__featured-title">{{ section.settings.featured_title }}</h2>{% endif %}
+        {% if section.settings.featured_description != blank %}<p class="az-voyage__featured-desc">{{ section.settings.featured_description }}</p>{% endif %}
+        {% if section.settings.featured_cta != blank or section.settings.featured_url != blank %}<a href="{{ section.settings.featured_url | default: '#' }}" class="az-voyage__featured-btn">{{ section.settings.featured_cta | default: 'Explore' }}</a>{% endif %}
       </div>
     </div>
   </div>
+  {% endif %}
 </section>
 {% endif %}
 
@@ -347,13 +291,13 @@
       "type": "text",
       "id": "title",
       "label": "Title",
-      "default": "Discover Fragrances from Around the World"
+      "default": "Scent Voyage"
     },
     {
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Embark on a sensory journey with our curated collection of destination-inspired scents and discovery sets."
+      "default": ""
     },
     {
       "type": "header",
@@ -363,19 +307,19 @@
       "type": "text",
       "id": "featured_title",
       "label": "Featured title",
-      "default": "Summer in Santorini"
+      "default": ""
     },
     {
       "type": "textarea",
       "id": "featured_description",
       "label": "Featured description",
-      "default": "Experience the essence of the Greek islands with our Santorini-inspired fragrance collection."
+      "default": ""
     },
     {
       "type": "text",
       "id": "featured_cta",
       "label": "Featured CTA text",
-      "default": "Explore Santorini Collection"
+      "default": ""
     },
     {
       "type": "url",

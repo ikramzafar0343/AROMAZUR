@@ -1,0 +1,257 @@
+{
+  "instructions": "Apply these metafields in Shopify Admin: Products → select product → Metafields (custom). Namespace: custom. Create definitions first in Settings → Custom data → Products if needed. Or use Bulk editor (Products → select all → Edit products) if metafields are exposed.",
+  "products": [
+    {
+      "handle": "diffuser-air-2-discovery-kit",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.fragrance_family": "",
+        "custom.coverage_days": "Up to 1,000 sq ft",
+        "custom.inspired_by": "",
+        "custom.notes_top": "",
+        "custom.notes_heart": "",
+        "custom.notes_base": ""
+      }
+    },
+    {
+      "handle": "diffuser-mini-2-le",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.fragrance_family": "",
+        "custom.coverage_days": "500 sq ft",
+        "custom.inspired_by": "",
+        "custom.notes_top": "",
+        "custom.notes_heart": "",
+        "custom.notes_base": ""
+      }
+    },
+    {
+      "handle": "diffuser-pro-2",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.fragrance_family": "",
+        "custom.coverage_days": "Up to 2,000 sq ft",
+        "custom.inspired_by": "",
+        "custom.notes_top": "",
+        "custom.notes_heart": "",
+        "custom.notes_base": ""
+      }
+    },
+    {
+      "handle": "coffret-decouverte",
+      "metafields": {
+        "custom.intensity": "",
+        "custom.fragrance_family": "Assorted",
+        "custom.coverage_days": "Gift set",
+        "custom.inspired_by": "",
+        "custom.notes_top": "",
+        "custom.notes_heart": "",
+        "custom.notes_base": ""
+      }
+    },
+    {
+      "handle": "blanc-de-provence",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Fresh Floral",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Luxury Provence hotels",
+        "custom.notes_top": "Lavender, Bergamot",
+        "custom.notes_heart": "White flowers, Cotton",
+        "custom.notes_base": "Musk, Clean woods"
+      }
+    },
+    {
+      "handle": "spa-blanc",
+      "metafields": {
+        "custom.intensity": "Light",
+        "custom.fragrance_family": "Fresh Aromatic",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Five-star spa resorts",
+        "custom.notes_top": "Eucalyptus, Mint",
+        "custom.notes_heart": "White tea, Bamboo",
+        "custom.notes_base": "Clean musk, Cedar"
+      }
+    },
+    {
+      "handle": "lin-blanc",
+      "metafields": {
+        "custom.intensity": "Light",
+        "custom.fragrance_family": "Fresh Clean",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Luxury hotel linen",
+        "custom.notes_top": "Aldehydes, Citrus",
+        "custom.notes_heart": "White linen, Lily",
+        "custom.notes_base": "Musk, Soft woods"
+      }
+    },
+    {
+      "handle": "cote-plage",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Fresh Marine",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Riviera beach hotels",
+        "custom.notes_top": "Sea salt, Lemon, Neroli",
+        "custom.notes_heart": "Jasmine, Solar notes",
+        "custom.notes_base": "Driftwood, Amber"
+      }
+    },
+    {
+      "handle": "jardin-mediterranee",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Floral Green",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Mediterranean villa gardens",
+        "custom.notes_top": "Orange blossom, Fig leaf",
+        "custom.notes_heart": "Jasmine, Rosemary, Basil",
+        "custom.notes_base": "Fig, Cedar, Musk"
+      }
+    },
+    {
+      "handle": "bois-d-ete",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Woody",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Boutique hotel lounges",
+        "custom.notes_top": "Cedar, Bergamot",
+        "custom.notes_heart": "Sandalwood, Lavender",
+        "custom.notes_base": "Amber, Vanilla, Musk"
+      }
+    },
+    {
+      "handle": "fleur-d-oranger",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Floral",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Palace hotel signature",
+        "custom.notes_top": "Neroli, Citrus",
+        "custom.notes_heart": "Orange blossom, Tuberose",
+        "custom.notes_base": "White musk, Honey"
+      }
+    },
+    {
+      "handle": "lavande-sauge",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Aromatic Herbal",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Provence inns",
+        "custom.notes_top": "Lavender, Sage",
+        "custom.notes_heart": "Lavandin, Thyme",
+        "custom.notes_base": "Woody herbs, Musk"
+      }
+    },
+    {
+      "handle": "the-vert-menthe",
+      "metafields": {
+        "custom.intensity": "Light",
+        "custom.fragrance_family": "Fresh Green",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Lobby lounges, afternoon tea",
+        "custom.notes_top": "Green tea, Mint",
+        "custom.notes_heart": "White tea, Cucumber",
+        "custom.notes_base": "Green leaves, Musk"
+      }
+    },
+    {
+      "handle": "bleu-azur",
+      "metafields": {
+        "custom.intensity": "Strong",
+        "custom.fragrance_family": "Woody Aromatic",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Bleu de Chanel style",
+        "custom.notes_top": "Lemon, Ginger, Mint",
+        "custom.notes_heart": "Lavender, Cedar",
+        "custom.notes_base": "Sandalwood, Patchouli, Amber"
+      }
+    },
+    {
+      "handle": "sauvage-noir",
+      "metafields": {
+        "custom.intensity": "Strong",
+        "custom.fragrance_family": "Spicy Woody",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Sauvage style",
+        "custom.notes_top": "Bergamot, Pepper",
+        "custom.notes_heart": "Lavender, Geranium",
+        "custom.notes_base": "Ambroxan, Cedar, Vanilla"
+      }
+    },
+    {
+      "handle": "oud-royal",
+      "metafields": {
+        "custom.intensity": "Very Strong",
+        "custom.fragrance_family": "Oriental Woody",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Luxury oud fragrances",
+        "custom.notes_top": "Saffron, Bergamot",
+        "custom.notes_heart": "Oud, Rose, Incense",
+        "custom.notes_base": "Sandalwood, Musk, Amber"
+      }
+    },
+    {
+      "handle": "j-adore-fleurs",
+      "metafields": {
+        "custom.intensity": "Strong",
+        "custom.fragrance_family": "Floral",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "J'adore style",
+        "custom.notes_top": "Ylang-ylang, Bergamot",
+        "custom.notes_heart": "Jasmine, Rose, Iris",
+        "custom.notes_base": "Vanilla, Musk"
+      }
+    },
+    {
+      "handle": "light-blue-sky",
+      "metafields": {
+        "custom.intensity": "Medium",
+        "custom.fragrance_family": "Fresh Fruity",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Light Blue style",
+        "custom.notes_top": "Apple, Cedar, Bellflower",
+        "custom.notes_heart": "Jasmine, White rose",
+        "custom.notes_base": "Cedar, Musk"
+      }
+    },
+    {
+      "handle": "black-opium-night",
+      "metafields": {
+        "custom.intensity": "Strong",
+        "custom.fragrance_family": "Oriental Gourmand",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Black Opium style",
+        "custom.notes_top": "Pink pepper, Orange blossom",
+        "custom.notes_heart": "Coffee, Jasmine",
+        "custom.notes_base": "Vanilla, Cedar, Patchouli"
+      }
+    },
+    {
+      "handle": "la-vie-est-belle",
+      "metafields": {
+        "custom.intensity": "Strong",
+        "custom.fragrance_family": "Gourmand Floral",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "La Vie Est Belle style",
+        "custom.notes_top": "Blackcurrant, Pear",
+        "custom.notes_heart": "Iris, Praline, Orange blossom",
+        "custom.notes_base": "Patchouli, Vanilla, Tonka"
+      }
+    },
+    {
+      "handle": "angel-etoile",
+      "metafields": {
+        "custom.intensity": "Very Strong",
+        "custom.fragrance_family": "Oriental Gourmand",
+        "custom.coverage_days": "30–60 days",
+        "custom.inspired_by": "Angel style",
+        "custom.notes_top": "Bergamot, Melon, Coconut",
+        "custom.notes_heart": "Jasmine, Red berries",
+        "custom.notes_base": "Patchouli, Vanilla, Amber"
+      }
+    }
+  ]
+}

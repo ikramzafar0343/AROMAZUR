@@ -32,7 +32,110 @@
         "type": "text",
         "id": "header_tagline",
         "label": "Tagline",
-        "default": "Welcome to our store"
+        "default": ""
+      },
+      {
+        "type": "header",
+        "content": "Tracking (load after cookie consent)"
+      },
+      {
+        "type": "text",
+        "id": "ga4_measurement_id",
+        "label": "GA4 Measurement ID",
+        "info": "e.g. G-XXXXXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "gtm_container_id",
+        "label": "Google Tag Manager container ID",
+        "info": "e.g. GTM-XXXXXXX"
+      },
+      {
+        "type": "text",
+        "id": "meta_pixel_id",
+        "label": "Meta (Facebook) Pixel ID",
+        "info": "Numeric Pixel ID"
+      },
+      {
+        "type": "header",
+        "content": "Cookie consent (GDPR)"
+      },
+      {
+        "type": "checkbox",
+        "id": "cookie_consent_enabled",
+        "label": "Show cookie consent banner",
+        "default": true
+      },
+      {
+        "type": "textarea",
+        "id": "cookie_consent_message",
+        "label": "Banner message",
+        "default": "We use cookies to improve your experience and for analytics. By continuing you accept our use of cookies. See our Privacy Policy."
+      },
+      {
+        "type": "text",
+        "id": "cookie_accept_all",
+        "label": "Accept all button",
+        "default": "Accept all"
+      },
+      {
+        "type": "text",
+        "id": "cookie_reject",
+        "label": "Reject non-essential button",
+        "default": "Reject non-essential"
+      },
+      {
+        "type": "text",
+        "id": "cookie_settings",
+        "label": "Settings / Privacy link text",
+        "default": "Privacy"
+      },
+      {
+        "type": "header",
+        "content": "Newsletter popup"
+      },
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_enabled",
+        "label": "Show newsletter popup",
+        "default": true
+      },
+      {
+        "type": "text",
+        "id": "newsletter_popup_headline",
+        "label": "Popup headline",
+        "default": "Join our world"
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_text",
+        "label": "Popup text",
+        "default": "Get 10% off your first order and exclusive drops. No spam."
+      },
+      {
+        "type": "number",
+        "id": "newsletter_popup_delay",
+        "label": "Show after (seconds)",
+        "default": 3,
+        "info": "0 = only on exit intent"
+      },
+      {
+        "type": "checkbox",
+        "id": "newsletter_popup_exit_intent",
+        "label": "Also show on exit intent",
+        "default": true
+      },
+      {
+        "type": "number",
+        "id": "newsletter_popup_cookie_days",
+        "label": "Don't show again for (days)",
+        "default": 7
+      },
+      {
+        "type": "textarea",
+        "id": "newsletter_popup_disclaimer",
+        "label": "Popup disclaimer",
+        "default": "By subscribing you agree to our Privacy Policy. Unsubscribe anytime."
       }
     ]
   }

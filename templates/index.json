@@ -4,6 +4,45 @@
       "type": "home-hero",
       "settings": {}
     },
+    "trust": {
+      "type": "home-trust",
+      "settings": {},
+      "block_order": ["grasse", "ipra", "delivery", "payment"],
+      "blocks": {
+        "grasse": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "grasse",
+            "title": "Made in Grasse",
+            "text": "Crafted in the perfume capital of the world, where centuries of savoir-faire meet modern innovation."
+          }
+        },
+        "ipra": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "ipra",
+            "title": "IPRA Partnership",
+            "text": "Proud partner of the International Fragrance Association. Safe, transparent, and responsibly crafted."
+          }
+        },
+        "delivery": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "delivery",
+            "title": "Free Delivery",
+            "text": "Complimentary shipping on orders over a set threshold. Fast and reliable delivery across France and beyond."
+          }
+        },
+        "payment": {
+          "type": "trust_item",
+          "settings": {
+            "icon": "payment",
+            "title": "Secure Payment",
+            "text": "Your payment is protected. We use industry-standard encryption and trusted payment providers."
+          }
+        }
+      }
+    },
     "collection_slider": {
       "type": "home-collection-slider",
       "settings": {}
@@ -38,8 +77,11 @@
     },
     "main": {
       "type": "main-index",
-      "settings": {}
+      "settings": {
+        "heading": "Les Parfums de la Côte d'Azur",
+        "text": "<p>Découvrez nos diffuseurs et huiles parfumées de luxe, créés à Grasse en partenariat avec l'IPRA. Collections inspirées des palaces et des grands parfumeurs. Livraison gratuite.</p>"
+      }
     }
   },
-  "order": ["hero", "collection_slider", "featured_products", "heritage", "newsletter_marquee", "reviews", "environments", "newsletter_cta", "faq", "main"]
+  "order": ["hero", "trust", "collection_slider", "featured_products", "heritage", "newsletter_marquee", "reviews", "environments", "newsletter_cta", "faq", "main"]
 }

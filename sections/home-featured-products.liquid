@@ -93,7 +93,6 @@
         {% for product in source_collection.products limit: 24 %}
           {% liquid
             assign category_token = ''
-
             assign type_lc = product.type | downcase
             case type_lc
               when 'diffusers'
@@ -107,7 +106,6 @@
               when 'perfumes'
                 assign category_token = 'perfumes'
             endcase
-
             if category_token == blank
               for tag in product.tags
                 assign tag_lc = tag | downcase
@@ -129,46 +127,18 @@
                 endif
               endfor
             endif
-
             assign on_sale = false
             if product.compare_at_price_max > product.price
               assign on_sale = true
             endif
           %}
-
-          {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-          <div class="az-prod az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" data-category="{{ category_token | escape }}" data-onsale="{% if on_sale %}true{% else %}false{% endif %}">
-            <a class="az-prod__link" href="{{ product.url }}">
-              <div class="az-prod__media">
-                {% if product.featured_image %}
-                  {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                {% else %}
-                  <div class="az-prod__placeholder"></div>
-                {% endif %}
-                {% if on_sale %}
-                  <span class="az-prod__badge">SALE</span>
-                {% endif %}
-              </div>
-              <div class="az-prod__body">
-                <h3 class="az-prod__title">{{ product.title }}</h3>
-                <div class="az-prod__price">
-                  <span class="az-prod__price-current">{{ product.price | money }}</span>
-                  {% if on_sale %}
-                    <span class="az-prod__price-compare">{{ product.compare_at_price_max | money }}</span>
-                  {% endif %}
-                </div>
-              </div>
-            </a>
-
-            <div class="az-prod__actions">
-              {% form 'product', product, class: 'az-prod__form' %}
-                <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                  {% if product.selected_or_first_available_variant.available %}Add to cart{% else %}Sold out{% endif %}
-                </button>
-              {% endform %}
-            </div>
-          </div>
+          {% assign card_data_attrs = 'data-category="' | append: category_token | append: '" data-onsale="' | append: on_sale | append: '"' %}
+          {% render 'product-card',
+            product: product,
+            show_quick_add: true,
+            show_wishlist: true,
+            delay_index: forloop.index0 | modulo: 5 | plus: 1,
+            data_attrs: card_data_attrs %}
         {% endfor %}
       </div>
 

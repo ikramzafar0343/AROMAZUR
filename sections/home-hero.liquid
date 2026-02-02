@@ -14,7 +14,7 @@
     {% endif %}
 
     {% if bg_image != blank %}
-      {{ bg_image | image_url: width: 2400 | image_tag: loading: 'eager', decoding: 'async', class: 'az-hero__bg-image', alt: '' }}
+      {{ bg_image | image_url: width: 2400 | image_tag: loading: 'eager', decoding: 'async', class: 'az-hero__bg-image', alt: section.settings.headline | default: shop.name }}
     {% endif %}
 
     <div class="az-hero__pattern" aria-hidden="true"></div>

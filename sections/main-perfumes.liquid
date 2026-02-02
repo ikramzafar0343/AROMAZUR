@@ -41,9 +41,9 @@
   <div class="az-perfumes__hero">
     <div class="page-width az-perfumes__hero-inner">
       <div class="az-perfumes__hero-content">
-        <div class="az-perfumes__eyebrow">PERFUMES</div>
-        <h1 class="az-perfumes__title">Luxury Fragrances for Every Occasion</h1>
-        <p class="az-perfumes__desc">Discover our curated collection of premium perfumes, from designer inspirations to unique artisanal scents.</p>
+        {% if section.settings.eyebrow != blank %}<div class="az-perfumes__eyebrow">{{ section.settings.eyebrow }}</div>{% endif %}
+        {% if section.settings.title != blank %}<h1 class="az-perfumes__title">{{ section.settings.title }}</h1>{% endif %}
+        {% if section.settings.description != blank %}<p class="az-perfumes__desc">{{ section.settings.description }}</p>{% endif %}
       </div>
     </div>
   </div>
@@ -154,143 +154,28 @@
         <div class="az-perfumes__grid" data-perfumes-grid>
           {% for product in perfumes_products %}
             {% liquid
-              assign category_token = ''
               assign type_lc = product.type | downcase
               case type_lc
                 when 'perfumes'
                   assign category_token = 'perfumes'
                 when 'fragrance oils'
                   assign category_token = 'fragrance-oils'
+                else
+                  assign category_token = type_lc | handle
               endcase
-              
-              if category_token == blank
-                assign category_token = type_lc | handle
-              endif
-              
               assign on_sale = false
               if product.compare_at_price > product.price
                 assign on_sale = true
               endif
-              
-              assign scent_profile = 'Floral'
-              assign gender = 'Unisex'
-              assign concentration = 'Eau de Parfum'
-              assign notes = ''
-              
-              for tag in product.tags
-                assign tag_lc = tag | downcase
-                if tag_lc contains 'woody' or tag_lc contains 'santal' or tag_lc contains 'oud'
-                  assign scent_profile = 'Woody'
-                  break
-                elsif tag_lc contains 'fruity' or tag_lc contains 'fresh' or tag_lc contains 'cherry' or tag_lc contains 'sky'
-                  assign scent_profile = 'Fruity/Fresh'
-                  break
-                elsif tag_lc contains 'amber' or tag_lc contains 'floral' or tag_lc contains 'brilliance' or tag_lc contains 'diamond'
-                  assign scent_profile = 'Amber/Floral'
-                  break
-                elsif tag_lc contains 'oriental'
-                  assign scent_profile = 'Oriental'
-                  break
-                elsif tag_lc contains 'citrus'
-                  assign scent_profile = 'Citrus'
-                  break
-                endif
-              endfor
-              
-              for tag in product.tags
-                assign tag_lc = tag | downcase
-                if tag_lc contains 'women' or tag_lc contains 'feminine' or tag_lc contains 'love'
-                  assign gender = 'Feminine'
-                  break
-                elsif tag_lc contains 'men' or tag_lc contains 'masculine' or tag_lc contains 'savage'
-                  assign gender = 'Masculine'
-                  break
-                endif
-              endfor
-              
-              for tag in product.tags
-                assign tag_lc = tag | downcase
-                if tag_lc contains 'extrait'
-                  assign concentration = 'Extrait de Parfum'
-                  break
-                endif
-              endfor
-              
-              if product.description contains 'notes' or product.description contains 'Notes'
-                assign notes_start = product.description | split: 'Notes:' | last | split: '.' | first
-                if notes_start != blank
-                  assign notes = notes_start | strip
-                endif
-              endif
             %}
-            
-            <div class="az-perfumes__product-wrapper">
-              {% assign delay_index = forloop.index0 | modulo: 5 | plus: 1 %}
-              <div class="az-perfumes__product az-prod az-hover-lift az-fade-in az-fade-in--up az-fade-in--delay-{{ delay_index }}" 
-                   data-perfumes-product 
-                   data-category="{{ category_token }}"
-                   data-scent-profile="{{ scent_profile | handle }}"
-                   data-price="{{ product.price }}"
-                   data-on-sale="{% if on_sale %}true{% else %}false{% endif %}">
-                <a class="az-prod__link" href="{{ product.url }}">
-                  <div class="az-prod__media">
-                    {% if product.featured_image %}
-                      {{ product.featured_image | image_url: width: 700 | image_tag: loading: 'lazy', decoding: 'async', alt: product.title }}
-                    {% else %}
-                      <div class="az-prod__placeholder"></div>
-                    {% endif %}
-                    {% if on_sale %}
-                      <span class="az-prod__badge">SALE</span>
-                    {% endif %}
-                  </div>
-                  <div class="az-prod__body">
-                    <h3 class="az-prod__title">{{ product.title }}</h3>
-                    <div class="az-prod__price">
-                      <span class="az-prod__price-current">{{ product.price | money }}</span>
-                      {% if on_sale %}
-                        <span class="az-prod__price-compare">{{ product.compare_at_price | money }}</span>
-                      {% endif %}
-                    </div>
-                  </div>
-                </a>
-
-                <div class="az-prod__actions">
-                  {% form 'product', product, class: 'az-prod__form' %}
-                    <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
-                    <button class="az-prod__btn" type="submit" {% unless product.selected_or_first_available_variant.available %}disabled{% endunless %}>
-                      {% if product.selected_or_first_available_variant.available %}
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display: inline-block; vertical-align: middle; margin-right: 6px;">
-                          <path d="M6 2L3 6V20C3 21.1046 3.89543 22 5 22H19C20.1046 22 21 21.1046 21 20V6L18 2H6Z" stroke="currentColor" stroke-width="2"/>
-                          <path d="M3 6H21" stroke="currentColor" stroke-width="2"/>
-                          <path d="M16 10C16 12.2091 14.2091 14 12 14C9.79086 14 8 12.2091 8 10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-                        </svg>
-                        Add to cart
-                      {% else %}
-                        Sold out
-                      {% endif %}
-                    </button>
-                  {% endform %}
-                </div>
-              </div>
-              
-              <!-- Premium Details -->
-              <div class="az-perfumes__product-details">
-                <p class="az-perfumes__product-meta">
-                  {{ gender }} • {{ concentration }}
-                </p>
-                {% if notes != blank %}
-                  <div class="az-perfumes__product-notes">
-                    {% assign notes_array = notes | split: ',' %}
-                    {% for note in notes_array limit: 3 %}
-                      {% assign trimmed_note = note | strip %}
-                      {% if trimmed_note != blank %}
-                        <span class="az-perfumes__product-note">{{ trimmed_note }}</span>
-                      {% endif %}
-                    {% endfor %}
-                  </div>
-                {% endif %}
-              </div>
-            </div>
+            {% assign card_data_attrs = 'data-perfumes-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' %}
+            {% render 'product-card',
+              product: product,
+              show_quick_add: true,
+              show_wishlist: true,
+              delay_index: forloop.index0 | modulo: 5 | plus: 1,
+              data_attrs: card_data_attrs,
+              wrapper_class: 'az-perfumes__product-wrapper' %}
           {% endfor %}
         </div>
 
@@ -367,7 +252,7 @@
       "type": "textarea",
       "id": "description",
       "label": "Description",
-      "default": "Discover our curated collection of premium perfumes, from designer inspirations to unique artisanal scents."
+      "default": ""
     }
   ],
   "presets": [
