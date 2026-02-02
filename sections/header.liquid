@@ -11,15 +11,12 @@
   assign diffusers_url = shop_all_url | append: '?view=diffusers'
   assign oils_url = shop_all_url | append: '?view=fragrance-oils'
   assign voyage_url = shop_all_url | append: '?view=voyage'
+  assign candles_url = shop_all_url | append: '?view=candles'
+  assign perfumes_url = shop_all_url | append: '?view=perfumes'
 
   assign room_sprays_collection = collections['fragrance-room-sprays']
   if room_sprays_collection == blank
     assign room_sprays_collection = collections['room-sprays']
-  endif
-  assign candles_collection = collections['candles']
-  assign perfumes_collection = collections['perfumes']
-  if perfumes_collection == blank
-    assign perfumes_collection = collections['fragrances']
   endif
   assign hotel_collection = collections['hotel']
   assign designer_collection = collections['designer']
@@ -31,16 +28,6 @@
     assign room_sprays_url = room_sprays_collection.url
   else
     assign room_sprays_url = '/collections/room-sprays'
-  endif
-  if candles_collection != blank
-    assign candles_url = candles_collection.url
-  else
-    assign candles_url = '/collections/candles'
-  endif
-  if perfumes_collection != blank
-    assign perfumes_url = perfumes_collection.url
-  else
-    assign perfumes_url = '/collections/perfumes'
   endif
   if hotel_collection != blank
     assign hotel_url = hotel_collection.url
@@ -99,11 +86,11 @@
     assign is_room_sprays = true
   endif
   assign is_candles = false
-  if request_path contains '/collections/candles'
+  if qs contains 'view=candles'
     assign is_candles = true
   endif
   assign is_perfumes = false
-  if request_path contains '/collections/perfumes' or request_path contains '/collections/fragrances'
+  if qs contains 'view=perfumes'
     assign is_perfumes = true
   endif
 %}

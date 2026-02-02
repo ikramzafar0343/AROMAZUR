@@ -340,7 +340,7 @@ The **`data/`** folder contains everything to populate the store via Shopify Adm
 
 ### Nav links (hardcoded)
 
-#NEW, SALE, DIFFUSERS, DIFFUSER OILS, and SCENT VOYAGE all point to Shop All with `?view=new`, `?view=sale`, `?view=diffusers`, `?view=fragrance-oils`, or `?view=voyage`. No collections or pages need to be created in Admin; the theme filters products by tags and product type on the Shop All page.
+#NEW, SALE, DIFFUSERS, DIFFUSER OILS, SCENT VOYAGE, CANDLES, and PERFUMES all point to Shop All with `?view=new`, `?view=sale`, `?view=diffusers`, `?view=fragrance-oils`, `?view=voyage`, `?view=candles`, or `?view=perfumes`. No collections or pages need to be created in Admin; the theme filters products by **Type** and **Tags** on the Shop All page. Use **Type** exactly: `Diffusers`, `Fragrance Oils`, `Coffrets`, `Candles`, `Perfumes`. Use **Tags** for filters: `new-arrivals`, `sale`, `diffusers`, `fragrance-oils`, `scent-voyage`, `hotel-collection`, `designer-collection`.
 
 
 

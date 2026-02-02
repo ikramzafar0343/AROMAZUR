@@ -1,6 +1,12 @@
 {% liquid
+  comment
+    Use the current collection when on /collections/all so products always show (no dependency on collections['all']).
+  endcomment
   if collection.handle == 'all' or collection.handle == blank
-    assign all_collection = collections['all']
+    assign all_collection = collection
+    if all_collection == blank
+      assign all_collection = collections['all']
+    endif
     if all_collection == blank
       assign all_collection = collections['frontpage']
     endif
@@ -28,6 +34,10 @@
     assign shop_view = 'fragrance-oils'
   elsif qs contains 'view=voyage'
     assign shop_view = 'voyage'
+  elsif qs contains 'view=candles'
+    assign shop_view = 'candles'
+  elsif qs contains 'view=perfumes'
+    assign shop_view = 'perfumes'
   endif
 
   assign hero_eyebrow = section.settings.eyebrow
@@ -53,6 +63,14 @@
     assign hero_eyebrow = 'SCENT VOYAGE'
     assign hero_title = 'Scent Voyage'
     assign hero_description = 'Destination-inspired fragrances. Explore the world through scent.'
+  elsif shop_view == 'candles'
+    assign hero_eyebrow = 'CANDLES'
+    assign hero_title = 'Candles'
+    assign hero_description = 'Scented candles for every space. Long-lasting fragrance and elegant design.'
+  elsif shop_view == 'perfumes'
+    assign hero_eyebrow = 'PERFUMES'
+    assign hero_title = 'Perfumes'
+    assign hero_description = 'Premium perfumes inspired by the French Riviera. Discover your signature scent.'
   endif
 
   assign categories_list = ''
@@ -214,9 +232,17 @@
               if type_lc == 'fragrance oils'
                 assign is_oil = true
               endif
+              assign is_candle = false
+              if type_lc == 'candles'
+                assign is_candle = true
+              endif
+              assign is_perfume = false
+              if type_lc == 'perfumes'
+                assign is_perfume = true
+              endif
             %}
             {% if on_sale or is_sale_tag %}{% assign show_in_sale = true %}{% else %}{% assign show_in_sale = false %}{% endif %}
-            {% assign view_attrs = ' data-view-new="' | append: is_new | append: '" data-view-sale="' | append: show_in_sale | append: '" data-view-diffusers="' | append: is_diffuser | append: '" data-view-fragrance-oils="' | append: is_oil | append: '" data-view-voyage="true"' %}
+            {% assign view_attrs = ' data-view-new="' | append: is_new | append: '" data-view-sale="' | append: show_in_sale | append: '" data-view-diffusers="' | append: is_diffuser | append: '" data-view-fragrance-oils="' | append: is_oil | append: '" data-view-voyage="true" data-view-candles="' | append: is_candle | append: '" data-view-perfumes="' | append: is_perfume | append: '"' %}
             {% assign card_data_attrs = 'data-shop-product data-category="' | append: category_token | append: '" data-price="' | append: product.price | append: '" data-on-sale="' | append: on_sale | append: '"' | append: view_attrs %}
             {% render 'product-card',
               product: product,
