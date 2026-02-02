@@ -504,12 +504,21 @@ textarea:focus-visible {
   position: fixed;
   inset: 0;
   z-index: 120;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.25s ease, opacity 0.25s ease;
+}
+
+.az-auth:not([hidden]) {
+  visibility: visible;
+  opacity: 1;
 }
 
 .az-auth__overlay {
   position: absolute;
   inset: 0;
-  background: var(--color-overlay);
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
 }
 
 .az-auth__panel {
@@ -517,20 +526,28 @@ textarea:focus-visible {
   top: 0;
   right: 0;
   height: 100%;
-  width: min(520px, 92vw);
+  width: min(420px, 100%);
+  max-width: 92vw;
   background: var(--color-surface);
   color: rgba(17, 24, 39, 1);
-  padding: 26px 26px 22px;
-  box-shadow: -24px 0 80px rgba(0, 0, 0, 0.22);
+  padding: 24px 24px 28px;
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.18);
   display: grid;
+  grid-template-rows: auto 1fr;
   align-content: start;
-  gap: 16px;
+  gap: 0;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.az-auth:not([hidden]) .az-auth__panel {
+  transform: translateX(0);
 }
 
 .az-auth__close {
   position: absolute;
-  top: 18px;
-  right: 18px;
+  top: 16px;
+  right: 16px;
   width: 42px;
   height: 42px;
   border-radius: 999px;
@@ -540,6 +557,7 @@ textarea:focus-visible {
   display: grid;
   place-items: center;
   cursor: pointer;
+  transition: background 0.2s ease;
 }
 
 .az-auth__close:hover {
@@ -552,39 +570,46 @@ textarea:focus-visible {
 }
 
 .az-auth__title {
-  margin-top: 34px;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 0.02em;
+  margin: 0;
+  padding: 44px 0 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  color: rgba(17, 24, 39, 1);
+  text-align: center;
 }
 
 .az-auth__actions {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 12px;
-  margin-top: 8px;
+  margin-top: 28px;
+  padding: 0 8px;
 }
 
 .az-auth__btn {
-  height: 46px;
-  border-radius: 6px;
-  border: 1px solid rgba(209, 213, 219, 1);
+  height: 48px;
+  border-radius: 8px;
+  border: 2px solid rgba(209, 213, 219, 1);
   background: var(--color-surface);
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  padding: 0 16px;
+  gap: 12px;
+  padding: 0 20px;
   text-decoration: none;
   color: rgba(17, 24, 39, 1);
-  font-size: 12px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
   text-transform: uppercase;
   cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .az-auth__btn:hover {
-  background: var(--color-surface-soft);
+  background: rgba(249, 250, 251, 1);
+  border-color: rgba(156, 163, 175, 1);
 }
 
 .az-auth__btn:focus-visible {
@@ -593,39 +618,74 @@ textarea:focus-visible {
 }
 
 .az-auth__btn-icon {
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   display: grid;
   place-items: center;
+  flex-shrink: 0;
+}
+
+.az-auth__btn--google {
+  border-color: rgba(229, 231, 235, 1);
+}
+
+.az-auth__btn--google:hover {
+  border-color: rgba(209, 213, 219, 1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
 
 .az-auth__btn--outline {
-  border-color: rgba(17, 24, 39, 1);
+  border-color: var(--color-azure, #1e3a5f);
+  color: var(--color-azure, #1e3a5f);
+  background: transparent;
+}
+
+.az-auth__btn--outline:hover {
+  background: var(--color-azure, #1e3a5f);
+  color: #fff;
+  border-color: var(--color-azure, #1e3a5f);
+  box-shadow: 0 4px 12px rgba(30, 58, 95, 0.25);
 }
 
 .az-auth__fineprint {
-  margin-top: 10px;
-  font-size: 11px;
+  margin-top: 24px;
+  padding: 0 8px;
+  font-size: 0.75rem;
   line-height: 1.6;
   color: rgba(107, 114, 128, 1);
+  text-align: center;
 }
 
 .az-auth__fineprint a {
-  color: rgba(17, 24, 39, 1);
+  color: var(--color-azure, #1e3a5f);
   text-decoration: underline;
   text-underline-offset: 3px;
+  font-weight: 600;
+}
+
+.az-auth__fineprint a:hover {
+  color: rgba(30, 58, 95, 0.85);
 }
 
 .az-cart {
   position: fixed;
   inset: 0;
   z-index: 120;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.25s ease, opacity 0.25s ease;
+}
+
+.az-cart:not([hidden]) {
+  visibility: visible;
+  opacity: 1;
 }
 
 .az-cart__overlay {
   position: absolute;
   inset: 0;
-  background: var(--color-overlay);
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
 }
 
 .az-cart__panel {
@@ -633,28 +693,37 @@ textarea:focus-visible {
   top: 0;
   right: 0;
   height: 100%;
-  width: min(520px, 92vw);
+  width: min(420px, 100%);
+  max-width: 92vw;
   background: var(--color-surface);
   color: rgba(17, 24, 39, 1);
-  box-shadow: -24px 0 80px rgba(0, 0, 0, 0.22);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.18);
   display: grid;
   grid-template-rows: auto 1fr auto;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.az-cart:not([hidden]) .az-cart__panel {
+  transform: translateX(0);
 }
 
 .az-cart__header {
-  padding: 20px 20px 14px;
+  padding: 18px 20px;
   border-bottom: 1px solid rgba(229, 231, 235, 1);
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+  flex-shrink: 0;
 }
 
 .az-cart__title {
   margin: 0;
-  font-size: 16px;
-  font-weight: 900;
-  letter-spacing: 0.08em;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: rgba(17, 24, 39, 1);
 }
 
 .az-cart__close {
@@ -678,8 +747,10 @@ textarea:focus-visible {
 }
 
 .az-cart__content {
-  padding: 18px 20px;
-  overflow: auto;
+  padding: 16px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
 }
 
 .az-cart__empty {
@@ -836,54 +907,30 @@ textarea:focus-visible {
 
 .az-cart__footer {
   border-top: 1px solid rgba(229, 231, 235, 1);
-  padding: 16px 20px 20px;
-  display: grid;
-  gap: 12px;
-}
-
-.az-cart__actions {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-
-.az-cart__view-cart.az-btn {
-  height: 46px;
-  border-radius: 4px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  text-decoration: none;
-  border: 2px solid var(--color-azure, #1E3A5F);
-  color: var(--color-azure, #1E3A5F);
-  background: transparent;
-  transition: background 0.2s, color 0.2s;
-}
-
-.az-cart__view-cart.az-btn:hover {
-  background: var(--color-azure, #1E3A5F);
-  color: #fff;
-}
-
-.az-cart__checkout.az-btn {
-  height: 46px;
-}
-
-.az-cart__trust {
-  font-size: 11px;
-  color: rgba(55, 65, 81, 0.7);
-  text-align: center;
-  margin: 0;
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  flex-shrink: 0;
+  background: var(--color-surface);
 }
 
 .az-cart__summary {
-  display: grid;
-  gap: 8px;
-  font-size: 13px;
-  color: rgba(55, 65, 81, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: rgba(55, 65, 81, 0.95);
+}
+
+.az-cart__free-shipping {
+  font-size: 0.75rem;
+  color: rgba(34, 197, 94, 1);
+  line-height: 1.3;
+}
+
+.az-cart__free-shipping[hidden] {
+  display: none;
 }
 
 .az-cart__summary-row {
@@ -894,15 +941,52 @@ textarea:focus-visible {
 }
 
 .az-cart__summary-row--total {
-  font-weight: 900;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 0.9375rem;
   color: rgba(17, 24, 39, 1);
+  margin-top: 2px;
 }
 
-.az-cart__free-shipping {
-  font-size: 12px;
-  color: rgba(34, 197, 94, 1);
-  margin-bottom: 4px;
+.az-cart__actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: stretch;
+}
+
+.az-cart__view-cart.az-btn {
+  height: 44px;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  border: 2px solid var(--color-azure, #1E3A5F);
+  color: var(--color-azure, #1E3A5F);
+  background: transparent;
+  transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+}
+
+.az-cart__view-cart.az-btn:hover {
+  background: var(--color-azure, #1E3A5F);
+  color: #fff;
+}
+
+.az-cart__checkout.az-btn {
+  height: 44px;
+}
+
+.az-cart__trust {
+  font-size: 0.6875rem;
+  color: rgba(107, 114, 128, 0.9);
+  text-align: center;
+  margin: 0;
+  padding-top: 2px;
+  line-height: 1.3;
+  letter-spacing: 0.02em;
 }
 
 .az-toast {
@@ -929,30 +1013,32 @@ textarea:focus-visible {
 }
 
 .az-cart__checkout {
-  height: 46px;
-  border-radius: 4px;
-  background: linear-gradient(to right, #0066cc, #20b2aa);
+  height: 44px;
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
   color: #fff;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   text-decoration: none;
-  font-weight: 500;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  letter-spacing: 0.04em;
   position: relative;
   overflow: hidden;
-  transition: all 200ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
   width: 100%;
+  cursor: pointer;
 }
 
 .az-cart__checkout:hover {
-  background: linear-gradient(to right, #0052a3, #1a9a94);
-  transform: scale(1.02);
+  box-shadow: 0 4px 14px rgba(30, 58, 95, 0.4);
+  transform: translateY(-1px);
 }
 
 .az-cart__checkout:active {
-  transform: scale(0.98);
+  transform: translateY(0);
 }
 
 .az-cart__checkout::before {
@@ -962,8 +1048,8 @@ textarea:focus-visible {
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 1s ease-in-out;
+  background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.15), transparent);
+  transition: left 0.6s ease;
 }
 
 .az-cart__checkout:hover::before {
@@ -2442,12 +2528,17 @@ textarea:focus-visible {
 
 .az-hero__price-card {
   border-radius: 12px;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: 22px;
   text-align: center;
-  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.18);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.az-hero__price-card:hover {
+  box-shadow: 0 16px 36px rgba(0, 102, 204, 0.35);
+  transform: translateY(-2px);
 }
 
 .az-hero__price {
@@ -3109,6 +3200,188 @@ textarea:focus-visible {
 
 .az-prod-card__hover-btn--wishlist.az-prod-card__hover-btn--active .az-wishlist-icon--filled {
   display: block;
+}
+
+/* Wishlist drawer */
+.az-wishlist-drawer {
+  position: fixed;
+  inset: 0;
+  z-index: 115;
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.25s ease, opacity 0.25s ease;
+}
+
+.az-wishlist-drawer:not([hidden]) {
+  visibility: visible;
+  opacity: 1;
+}
+
+.az-wishlist-drawer__overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(17, 24, 39, 0.4);
+  backdrop-filter: blur(4px);
+}
+
+.az-wishlist-drawer__panel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: min(420px, 100%);
+  max-width: 92vw;
+  background: var(--color-surface);
+  color: rgba(17, 24, 39, 1);
+  box-shadow: -16px 0 48px rgba(0, 0, 0, 0.18);
+  display: grid;
+  grid-template-rows: auto 1fr auto;
+  transform: translateX(100%);
+  transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.az-wishlist-drawer:not([hidden]) .az-wishlist-drawer__panel {
+  transform: translateX(0);
+}
+
+.az-wishlist-drawer__header {
+  padding: 18px 20px;
+  border-bottom: 1px solid rgba(229, 231, 235, 1);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.az-wishlist-drawer__title {
+  margin: 0;
+  font-size: 1.125rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  color: rgba(17, 24, 39, 1);
+}
+
+.az-wishlist-drawer__close {
+  width: 42px;
+  height: 42px;
+  border-radius: 999px;
+  border: 1px solid var(--color-border);
+  background: var(--color-surface);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+}
+
+.az-wishlist-drawer__close:hover {
+  background: var(--color-surface-soft);
+}
+
+.az-wishlist-drawer__close:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.5);
+  outline-offset: 2px;
+}
+
+.az-wishlist-drawer__content {
+  padding: 16px 20px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+}
+
+.az-wishlist-drawer__empty {
+  text-align: center;
+  padding: 32px 16px;
+}
+
+.az-wishlist-drawer__empty-text {
+  margin: 0 0 14px;
+  font-size: 0.9375rem;
+  color: rgba(107, 114, 128, 1);
+}
+
+.az-wishlist-drawer__continue {
+  display: inline-block;
+  padding: 12px 20px;
+  background: var(--color-azure, #1e3a5f);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  border-radius: 8px;
+  transition: opacity 0.2s ease;
+}
+
+.az-wishlist-drawer__continue:hover {
+  opacity: 0.95;
+}
+
+.az-wishlist-drawer__items {
+  display: grid;
+  gap: 12px;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item {
+  grid-template-columns: 72px 1fr;
+  gap: 12px;
+  padding: 12px;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__image {
+  width: 72px;
+  height: 72px;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__title {
+  font-size: 0.875rem;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__price {
+  font-size: 0.8125rem;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__actions {
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.az-wishlist-drawer__items .az-wishlist-item__add-cart,
+.az-wishlist-drawer__items .az-wishlist-item__remove {
+  padding: 8px 12px;
+  font-size: 0.75rem;
+}
+
+.az-wishlist-drawer__footer {
+  border-top: 1px solid rgba(229, 231, 235, 1);
+  padding: 14px 20px 18px;
+  flex-shrink: 0;
+}
+
+.az-wishlist-drawer__view-page {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 8px;
+  border: 2px solid var(--color-azure, #1e3a5f);
+  color: var(--color-azure, #1e3a5f);
+  background: transparent;
+  font-weight: 700;
+  font-size: 0.8125rem;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.az-wishlist-drawer__view-page:hover {
+  background: var(--color-azure, #1e3a5f);
+  color: #fff;
 }
 
 /* Wishlist page */
@@ -6974,7 +7247,7 @@ textarea:focus-visible {
 
 .az-shop__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -6983,9 +7256,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-shop__hero-inner {
@@ -7455,7 +7728,7 @@ textarea:focus-visible {
 
 .az-voyage__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -7464,9 +7737,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-voyage__hero-inner {
@@ -7943,7 +8216,7 @@ textarea:focus-visible {
   position: relative;
   overflow: hidden;
   padding: var(--spacing-3xl) 0;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
 }
 
 .az-voyage__featured-bg {
@@ -8176,7 +8449,7 @@ textarea:focus-visible {
 
 .az-perfumes__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -8185,9 +8458,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-perfumes__hero-inner {
@@ -8895,7 +9168,7 @@ textarea:focus-visible {
 
 .az-new__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -8904,9 +9177,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-new__hero-inner {
@@ -9278,7 +9551,7 @@ textarea:focus-visible {
   position: relative;
   overflow: hidden;
   padding: var(--spacing-3xl) 0;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
 }
 
 .az-new__featured-inner {
@@ -9486,7 +9759,7 @@ textarea:focus-visible {
 
 .az-contact__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -9495,9 +9768,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-contact__hero-inner {
@@ -9722,7 +9995,7 @@ textarea:focus-visible {
 
 .az-candles__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(17, 24, 39, 0.95) 0%, rgba(31, 41, 55, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -9731,9 +10004,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-candles__hero-inner {
@@ -10459,7 +10732,7 @@ textarea:focus-visible {
 
 .az-sale__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(220, 38, 38, 0.95) 0%, rgba(185, 28, 28, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -10468,9 +10741,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-sale__hero-inner {
@@ -10963,7 +11236,7 @@ textarea:focus-visible {
 
 .az-diffusers__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(26, 115, 232, 0.95) 0%, rgba(21, 87, 176, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -10972,9 +11245,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-diffusers__hero-inner {
@@ -11490,7 +11763,7 @@ textarea:focus-visible {
 
 .az-oils__hero {
   position: relative;
-  background: linear-gradient(135deg, rgba(139, 69, 19, 0.95) 0%, rgba(101, 50, 14, 0.98) 100%);
+  background: linear-gradient(to right, #0066cc, #20b2aa);
   padding: var(--spacing-3xl) 0;
   overflow: hidden;
 }
@@ -11499,9 +11772,9 @@ textarea:focus-visible {
   content: '';
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
   background-size: 24px 24px;
-  opacity: 0.3;
+  opacity: 0.5;
 }
 
 .az-oils__hero-inner {

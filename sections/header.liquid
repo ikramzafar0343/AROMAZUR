@@ -158,12 +158,12 @@
             </button>
             {% endif %}
 
-        <a class="az-icon-btn" href="/pages/wishlist" aria-label="Wishlist" data-wishlist-link style="position: relative;">
+        <button class="az-icon-btn" type="button" aria-label="Wishlist" data-wishlist-toggle-drawer aria-controls="WishlistDrawer-{{ section.id }}" style="position: relative;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
               <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3c3.08 0 5.5 2.42 5.5 5.5 0 3.78-3.4 6.86-8.55 11.54L12 21.35z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
             <span class="az-badge" data-wishlist-count hidden>0</span>
-          </a>
+          </button>
 
         <button class="az-icon-btn" type="button" aria-label="Cart" data-cart-toggle aria-controls="CartModal-{{ section.id }}">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -633,7 +633,7 @@
 
         <div class="az-cart__footer" data-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
           <div class="az-cart__summary">
-            <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite"></div>
+            <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite" {% if cart.item_count == 0 %}hidden{% endif %}></div>
             <div class="az-cart__summary-row az-cart__summary-row--total">
               <span>{{ 'cart.subtotal' | t | default: 'Sous-total' }}</span>
               <span class="az-cart__total" data-cart-total>{{ cart.total_price | money }}</span>
@@ -646,6 +646,32 @@
             </a>
           </div>
           <p class="az-cart__trust">{{ 'cart.trust_badge' | t | default: 'Paiement sécurisé par Stripe' }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Wishlist Drawer -->
+    <div class="az-wishlist-drawer" id="WishlistDrawer-{{ section.id }}" data-wishlist-drawer hidden role="dialog" aria-modal="true" aria-label="Wishlist">
+      <div class="az-wishlist-drawer__overlay" data-wishlist-drawer-close></div>
+      <div class="az-wishlist-drawer__panel">
+        <div class="az-wishlist-drawer__header">
+          <h2 class="az-wishlist-drawer__title" data-wishlist-drawer-title>Ma liste d'envies</h2>
+          <button class="az-wishlist-drawer__close" type="button" aria-label="Close wishlist" data-wishlist-drawer-close>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+              <path d="M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+          </button>
+        </div>
+        <div class="az-wishlist-drawer__content" data-wishlist-drawer-content>
+          <div class="az-wishlist-drawer__empty" data-wishlist-drawer-empty hidden>
+            <p class="az-wishlist-drawer__empty-text">Votre liste d'envies est vide.</p>
+            <a href="{{ routes.all_products_collection_url }}" class="az-wishlist-drawer__continue">Continuer mes achats</a>
+          </div>
+          <div class="az-wishlist-drawer__items" data-wishlist-drawer-items></div>
+        </div>
+        <div class="az-wishlist-drawer__footer" data-wishlist-drawer-footer hidden>
+          <a href="/pages/wishlist" class="az-wishlist-drawer__view-page az-btn az-btn--outline">Voir la page liste d'envies</a>
         </div>
       </div>
     </div>
