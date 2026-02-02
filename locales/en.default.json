@@ -9,7 +9,7 @@
     "discover": "Découvrir nos parfums",
     "view_cart": "Voir le panier",
     "subtotal": "Sous-total",
-    "checkout": "Passer la commande",
+    "checkout": "CHECKOUT",
     "trust_badge": "Paiement sécurisé par Stripe",
     "added_to_cart": "✓ Ajouté au panier",
     "free_shipping_remaining": "Plus que {{ amount }} pour la livraison gratuite",
