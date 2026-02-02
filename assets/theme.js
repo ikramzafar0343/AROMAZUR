@@ -174,13 +174,49 @@
     const formatMoney = (cents) => {
       const value = Number(cents);
       if (!Number.isFinite(value)) return '';
-      if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
-        return window.Shopify.formatMoney(value);
-      }
       const format = moneyFormat();
+      if (window.Shopify && typeof window.Shopify.formatMoney === 'function') {
+        try {
+          const out = format ? window.Shopify.formatMoney(value, format) : window.Shopify.formatMoney(value);
+          if (typeof out === 'string' && !out.includes('{{')) return out;
+        } catch (_) {}
+      }
       if (format) {
-        const amount = (value / 100).toFixed(2);
-        return format.replace(/\{\{amount\}\}/g, amount).replace(/\{\{amount_no_decimals\}\}/g, String(Math.round(value / 100)));
+        const formatWithDelimiters = (number, precision, thousands, decimal) => {
+          const n = Number(number);
+          if (!Number.isFinite(n)) return '';
+          const fixed = (n / 100).toFixed(Math.max(0, precision));
+          const parts = fixed.split('.');
+          const dollars = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, thousands);
+          const centsPart = parts[1] || '';
+          return precision > 0 ? `${dollars}${decimal}${centsPart}` : dollars;
+        };
+
+        const token = (format.match(/\{\{\s*(\w+)\s*\}\}/) || [])[1] || 'amount';
+        const formatted = (() => {
+          switch (token) {
+            case 'amount':
+              return formatWithDelimiters(value, 2, ',', '.');
+            case 'amount_no_decimals':
+              return formatWithDelimiters(value, 0, ',', '.');
+            case 'amount_with_comma_separator':
+              return formatWithDelimiters(value, 2, '.', ',');
+            case 'amount_no_decimals_with_comma_separator':
+              return formatWithDelimiters(value, 0, '.', ',');
+            case 'amount_with_space_separator':
+              return formatWithDelimiters(value, 2, ' ', ',');
+            case 'amount_no_decimals_with_space_separator':
+              return formatWithDelimiters(value, 0, ' ', ',');
+            case 'amount_with_apostrophe_separator':
+              return formatWithDelimiters(value, 2, "'", '.');
+            case 'amount_no_decimals_with_apostrophe_separator':
+              return formatWithDelimiters(value, 0, "'", '.');
+            default:
+              return formatWithDelimiters(value, 2, ',', '.');
+          }
+        })();
+
+        return format.replace(/\{\{\s*\w+\s*\}\}/g, formatted);
       }
       return `€${(value / 100).toFixed(2)}`;
     };
