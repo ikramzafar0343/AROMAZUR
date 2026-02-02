@@ -792,7 +792,7 @@ textarea:focus-visible {
   color: rgba(17, 24, 39, 1);
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.2);
   display: grid;
-  grid-template-rows: auto 1fr auto auto;
+  grid-template-rows: auto 1fr auto;
   transform: translateX(100%);
   transition: transform 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
@@ -1087,18 +1087,26 @@ textarea:focus-visible {
 }
 
 .az-cart__remove {
-  border: 0;
-  background: transparent;
-  color: rgba(107, 114, 128, 1);
-  font-weight: 800;
-  font-size: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid rgba(229, 231, 235, 1);
+  background: #ffffff;
+  color: rgba(17, 24, 39, 1);
+  display: grid;
+  place-items: center;
   cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 3px;
+  transition: background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
 }
 
 .az-cart__remove:hover {
-  color: rgba(17, 24, 39, 1);
+  background: rgba(249, 250, 251, 1);
+  border-color: rgba(209, 213, 219, 1);
+}
+
+.az-cart__remove:focus-visible {
+  outline: 2px solid rgba(37, 99, 235, 0.5);
+  outline-offset: 2px;
 }
 
 .az-cart__item-price-compare {
@@ -1151,7 +1159,7 @@ textarea:focus-visible {
   padding: 16px 20px 20px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0;
   flex-shrink: 0;
   background: #ffffff;
 }
@@ -1217,29 +1225,15 @@ textarea:focus-visible {
 }
 
 .az-cart__checkout {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
   width: 100%;
-  min-height: 52px;
-  padding: 0 20px;
-  border-radius: 8px;
-  border: none;
-  background: rgba(17, 24, 39, 1);
-  color: #fff;
-  font-size: 0.8125rem;
-  font-weight: 800;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.az-cart__checkout.az-btn {
+  border-radius: 12px;
 }
 
 .az-cart__checkout:hover {
-  background: rgba(31, 41, 55, 1);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  box-shadow: none;
 }
 
 .az-cart__checkout-icon {

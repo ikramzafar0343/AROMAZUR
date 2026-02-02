@@ -588,14 +588,7 @@
       <div class="az-cart__panel">
         <div class="az-cart__header">
           <h2 class="az-cart__title" data-cart-title-base="{{ 'cart.title' | t | default: 'CART' }}">{{ 'cart.title' | t | default: 'CART' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h2>
-          <div class="az-cart__gift" data-cart-gift hidden aria-hidden="true">
-            <p class="az-cart__gift-text" data-cart-gift-text></p>
-            <div class="az-cart__gift-bar"><div class="az-cart__gift-fill" data-cart-gift-fill></div></div>
-          </div>
           <div class="az-cart__header-actions">
-            <span class="az-cart__gift-icon" aria-hidden="true">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><path d="M20 12v10H4V12M22 7H2v5h20V7zM12 22V7M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7zM12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
-            </span>
             <button class="az-cart__close" type="button" aria-label="Close cart" data-cart-close>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                 <path d="M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
@@ -613,7 +606,6 @@
               <path d="M9 7C9 5.34315 10.3431 4 12 4C13.6569 4 15 5.34315 15 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
             </svg>
             <p>{{ 'cart.empty' | t | default: 'Your cart is empty.' }}</p>
-            <a href="{{ routes.all_products_collection_url }}" class="az-cart__continue">{{ 'cart.discover' | t | default: 'Continue shopping' }}</a>
           </div>
 
           <div class="az-cart__items" data-cart-items {% if cart.item_count == 0 %}hidden{% endif %}>
@@ -643,7 +635,15 @@
                       <input type="number" class="az-cart__qty-input" value="{{ item.quantity }}" min="1" data-cart-quantity aria-label="Quantity">
                       <button type="button" class="az-cart__qty-btn" data-cart-increase aria-label="Increase quantity">+</button>
                     </div>
-                    <button type="button" class="az-cart__remove" data-cart-remove aria-label="Remove item">{{ 'cart.remove' | t | default: 'Remove' }}</button>
+                    <button type="button" class="az-cart__remove" data-cart-remove aria-label="Remove item">
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M4 7H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M10 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M14 11V17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M6 7L7 20H17L18 7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                        <path d="M9 7V5C9 3.89543 9.89543 3 11 3H13C14.1046 3 15 3.89543 15 5V7" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                      </svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -651,40 +651,13 @@
           </div>
         </div>
 
-        <div class="az-cart__upsell" data-cart-upsell {% if cart.item_count == 0 %}hidden{% endif %}>
-          <p class="az-cart__upsell-text">Complete the set with our best-selling scents.</p>
-          <a href="{{ routes.all_products_collection_url }}" class="az-cart__upsell-btn">ADD DISCOVERY SET</a>
-        </div>
-
         <div class="az-cart__footer" data-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
-          <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite" {% if cart.item_count == 0 %}hidden{% endif %}></div>
-          {% assign cart_savings = 0 %}
-          {% assign cart_original_total = 0 %}
-          {% for item in cart.items %}
-            {% assign cart_original_total = cart_original_total | plus: item.original_line_price %}
-            {% if item.original_line_price > item.final_line_price %}
-              {% assign item_saving = item.original_line_price | minus: item.final_line_price %}
-              {% assign cart_savings = cart_savings | plus: item_saving %}
-            {% endif %}
-          {% endfor %}
-          <div class="az-cart__summary">
-            <div class="az-cart__summary-row az-cart__summary-row--savings" data-cart-savings-row {% if cart_savings == 0 %}hidden{% endif %}>
-              <span>{{ 'cart.savings' | t | default: 'Savings' }}</span>
-              <span class="az-cart__savings" data-cart-savings>-{{ cart_savings | money }}</span>
-            </div>
-            <div class="az-cart__summary-row az-cart__summary-row--total">
-              <span>{{ 'cart.subtotal' | t | default: 'Subtotal' }}</span>
-              <span class="az-cart__total-wrap">
-                <span class="az-cart__total-original" data-cart-original-total {% if cart_savings == 0 %}hidden{% endif %}>{{ cart_original_total | money }}</span>
-                <span class="az-cart__total" data-cart-total>{{ cart.total_price | money }}</span>
-              </span>
-            </div>
-          </div>
-          <a href="/checkout" class="az-cart__checkout">
-            <svg class="az-cart__checkout-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            <span>{{ 'cart.checkout' | t | default: 'Proceed to Checkout' }}</span>
+          <a href="/checkout" class="az-cart__checkout az-btn az-btn--primary az-btn--lg">
+            <span class="az-btn__content">
+              <svg class="az-cart__checkout-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+              <span>{{ 'cart.checkout' | t | default: 'Proceed to Checkout' }}</span>
+            </span>
           </a>
-          <a href="{{ routes.cart_url }}" class="az-cart__view-cart-link">{{ 'cart.view_cart' | t | default: 'View cart' }}</a>
         </div>
       </div>
     </div>
