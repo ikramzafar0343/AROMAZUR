@@ -546,12 +546,18 @@
             </svg>
           </button>
 
-          <div class="az-auth__title">SIGN IN OR CREATE ACCOUNT</div>
+          <h2 class="az-auth__title">SIGN IN OR CREATE ACCOUNT</h2>
 
           <div class="az-auth__actions">
+            <a class="az-auth__btn az-auth__btn--facebook" href="{{ routes.account_login_url }}" aria-label="Sign in with Facebook">
+              <span class="az-auth__btn-icon" aria-hidden="true">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#1877F2" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+              </span>
+              <span>SIGN IN WITH FACEBOOK</span>
+            </a>
             <a class="az-auth__btn az-auth__btn--google" href="{{ routes.account_login_url }}" aria-label="Sign in with Google">
               <span class="az-auth__btn-icon" aria-hidden="true">
-                <svg width="18" height="18" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <svg width="20" height="20" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                   <path fill="#EA4335" d="M12 10.2v3.9h5.45c-.24 1.25-1.4 3.66-5.45 3.66-3.28 0-5.96-2.72-5.96-6.06S8.72 5.64 12 5.64c1.87 0 3.12.8 3.84 1.49l2.62-2.52C16.87 3.13 14.7 2 12 2 6.98 2 2.9 6.08 2.9 11.7S6.98 21.4 12 21.4c6.92 0 8.62-4.86 8.62-7.38 0-.5-.06-.88-.13-1.26H12z"/>
                   <path fill="#34A853" d="M3.93 7.25l3.21 2.35C7.98 7.53 9.81 6.14 12 6.14c1.87 0 3.12.8 3.84 1.49l2.62-2.52C16.87 3.13 14.7 2 12 2 8.19 2 4.9 4.28 3.93 7.25z"/>
                   <path fill="#FBBC05" d="M12 21.4c2.64 0 4.86-.87 6.48-2.36l-2.99-2.45c-.8.56-1.87.95-3.49.95-3.98 0-5.16-2.74-5.45-3.66l-3.19 2.46C4.33 19.52 7.82 21.4 12 21.4z"/>
@@ -560,13 +566,23 @@
               </span>
               <span>SIGN IN WITH GOOGLE</span>
             </a>
-
-            <a class="az-auth__btn az-auth__btn--outline" href="{{ routes.account_register_url }}">CREATE ACCOUNT</a>
           </div>
 
-          <div class="az-auth__fineprint">
-            By continuing you agree to our <a href="/policies/privacy-policy">Privacy Policy</a> and <a href="/policies/terms-of-service">Terms &amp; Conditions</a>
+          <div class="az-auth__divider" aria-hidden="true">
+            <span class="az-auth__divider-text">Or</span>
           </div>
+
+          <div class="az-auth__email">
+            <form class="az-auth__form" action="{{ routes.account_login_url }}" method="get" role="presentation">
+              <label class="az-auth__label" for="AuthEmail-{{ section.id }}">Email</label>
+              <input type="email" id="AuthEmail-{{ section.id }}" name="contact[email]" class="az-auth__input" placeholder="Email" autocomplete="email" aria-label="Email">
+              <button type="submit" class="az-auth__continue">Continue</button>
+            </form>
+          </div>
+
+          <p class="az-auth__fineprint">
+            By clicking Continue you agree to our <a href="/policies/privacy-policy">Privacy Policy</a> and <a href="/policies/terms-of-service">Terms &amp; Conditions</a>
+          </p>
         </div>
       </div>
     {% endunless %}
@@ -575,6 +591,11 @@
     <div class="az-cart" id="CartModal-{{ section.id }}" data-cart-modal hidden role="dialog" aria-modal="true" aria-label="Shopping cart">
       <div class="az-cart__overlay" data-cart-close></div>
       <div class="az-cart__panel">
+        <div class="az-cart__brand">
+          <span class="az-cart__eyebrow"><span class="az-cart__spark" aria-hidden="true"></span>Limited drops</span>
+          <p class="az-cart__brand-name">Les Parfums de la Côte d'Azur</p>
+          <p class="az-cart__tagline">Refined home fragrance inspired by the French Riviera.</p>
+        </div>
         <div class="az-cart__header">
           <h2 class="az-cart__title" data-cart-title-base="{{ 'cart.title' | t | default: 'Panier' }}">{{ 'cart.title' | t | default: 'Panier' }}{% if cart.item_count > 0 %} ({{ cart.item_count }}){% endif %}</h2>
           <button class="az-cart__close" type="button" aria-label="Close cart" data-cart-close>
@@ -632,18 +653,31 @@
         </div>
 
         <div class="az-cart__footer" data-cart-footer {% if cart.item_count == 0 %}hidden{% endif %}>
+          <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite" {% if cart.item_count == 0 %}hidden{% endif %}></div>
+          {% assign cart_savings = 0 %}
+          {% for item in cart.items %}
+            {% if item.original_line_price > item.final_line_price %}
+              {% assign item_saving = item.original_line_price | minus: item.final_line_price %}
+              {% assign cart_savings = cart_savings | plus: item_saving %}
+            {% endif %}
+          {% endfor %}
           <div class="az-cart__summary">
-            <div class="az-cart__free-shipping" data-cart-free-shipping aria-live="polite" {% if cart.item_count == 0 %}hidden{% endif %}></div>
+            {% if cart_savings > 0 %}
+              <div class="az-cart__summary-row az-cart__summary-row--savings">
+                <span>{{ 'cart.savings' | t | default: 'Économies' }}</span>
+                <span class="az-cart__savings">-{{ cart_savings | money }}</span>
+              </div>
+            {% endif %}
             <div class="az-cart__summary-row az-cart__summary-row--total">
               <span>{{ 'cart.subtotal' | t | default: 'Sous-total' }}</span>
               <span class="az-cart__total" data-cart-total>{{ cart.total_price | money }}</span>
             </div>
           </div>
           <div class="az-cart__actions">
-            <a href="{{ routes.cart_url }}" class="az-cart__view-cart az-btn az-btn--outline">{{ 'cart.view_cart' | t | default: 'Voir le panier' }}</a>
-            <a href="/checkout" class="az-cart__checkout az-btn az-btn--primary">
+            <a href="/checkout" class="az-cart__checkout az-cart__cta-primary">
               {{ 'cart.checkout' | t | default: 'Passer la commande' }}
             </a>
+            <a href="{{ routes.cart_url }}" class="az-cart__view-cart az-cart__cta-secondary">{{ 'cart.view_cart' | t | default: 'Voir le panier' }}</a>
           </div>
           <p class="az-cart__trust">{{ 'cart.trust_badge' | t | default: 'Paiement sécurisé par Stripe' }}</p>
         </div>
