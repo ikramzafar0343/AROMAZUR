@@ -1,10 +1,3 @@
-{% liquid
-  assign index_collection = collections['all']
-  if index_collection == blank
-    assign index_collection = collections['frontpage']
-  endif
-  assign index_products = index_collection.products
-%}
 <section class="main-index">
   <div class="page-width">
     {% if section.settings.heading != blank or section.settings.text != blank %}
@@ -18,23 +11,6 @@
       {% endif %}
     {% else %}
       <p class="main-index__empty" style="color: var(--color-text-muted); font-size: 15px;">Contenu personnalisable dans l'éditeur de thème.</p>
-    {% endif %}
-
-    {% if index_products.size > 0 %}
-      <div class="main-index__products">
-        <h3 class="main-index__products-title">Découvrir tous nos produits</h3>
-        <a href="{{ routes.all_products_collection_url }}" class="main-index__products-link">Voir tout →</a>
-        <div class="main-index__grid">
-          {% for product in index_products limit: 12 %}
-            {% render 'product-card',
-              product: product,
-              show_quick_add: true,
-              show_wishlist: true,
-              delay_index: forloop.index0 | modulo: 4 | plus: 1,
-              wrapper_class: 'main-index__card' %}
-          {% endfor %}
-        </div>
-      </div>
     {% endif %}
   </div>
 </section>
